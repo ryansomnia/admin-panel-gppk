@@ -1,0 +1,72 @@
+.artikel-data-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Tombol Dasar */
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 3rem; 
+    
+  }
+  .actions{
+    margin: 3px;
+    align-items: center;
+  }
+  
+  /* Tombol Utama (Tambah, Submit) */
+  .btn-primary {
+    background: linear-gradient(90deg, #4caf50, #43a047);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(90deg, #43a047, #388e3c);
+    transform: scale(1.05);
+  }
+  
+  /* Tombol Sekunder (Edit) */
+  .btn-secondary {
+    background: linear-gradient(90deg, #2196f3, #1976d2);
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background: linear-gradient(90deg, #1976d2, #1565c0);
+    transform: scale(1.05);
+  }
+  
+  /* Tombol Hapus */
+  .btn-delete {
+    background: linear-gradient(90deg, #e53935, #c62828);
+    color: white;
+  }
+  
+  .btn-delete:hover {
+    background: linear-gradient(90deg, #c62828, #b71c1c);
+    transform: scale(1.05);
+  }
+  
+  /* Tombol Batal */
+  .btn-cancel {
+    background: #bdbdbd;
+    color: #424242;
+  }
+  
+  .btn-cancel:hover {
+    background: #9e9e9e;
+    transform: scale(1.05);
+  }
+  
+  /* Animasi */
+  button:active {
+    transform: scale(0.95);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
