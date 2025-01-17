@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import DynamicTable from './DynamicTable';
 import './ArtikelData.css';
 import Swal from 'sweetalert2';
+require('dotenv').config()
+
 
 const ExpandableContent = ({ content }) => {
   const [expanded, setExpanded] = React.useState(false);
@@ -37,14 +39,14 @@ function ArtikelData() {
 
   // Fetch data artikel
   const fetchArtikelData = async () => {
-    const response = await fetch('http://localhost:3001/cbn/v1/artikel/getAllArticle');
+    const response = await fetch(`http://${process.env.URL}/cbn/v1/artikel/getAllArticle`);
     const data = await response.json();
     return data.data;
   };
 
   // Delete artikel
   const deleteArtikel = async (id) => {
-    const response = await fetch('http://localhost:3001/cbn/v1/artikel/deleteOneData', {
+    const response = await fetch(`http://${process.env.URL}/cbn/v1/artikel/deleteOneData`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

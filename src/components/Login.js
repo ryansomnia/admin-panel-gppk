@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+require('dotenv').config()
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -29,7 +30,7 @@ function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async ({ username, password }) => {
-      const response = await fetch('http://localhost:3001/cbn/v1/user/login', {
+      const response = await fetch(`http://${process.env.URL}/cbn/v1/user/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
