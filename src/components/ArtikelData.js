@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import DynamicTable from './DynamicTable';
 import './ArtikelData.css';
 import Swal from 'sweetalert2';
-require('dotenv').config()
+
 
 
 const ExpandableContent = ({ content }) => {

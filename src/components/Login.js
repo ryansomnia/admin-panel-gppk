@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-require('dotenv').config()
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -30,7 +29,13 @@ function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async ({ username, password }) => {
-      const response = await fetch(`http://${process.env.URL}/cbn/v1/user/login`, {
+      console.log('===============rrr=====================');
+      console.log(`${process.env.URL}`);
+      console.log('====================================');
+      console.log('====================================');
+      console.log('sasasa');
+      console.log('====================================');
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/user/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
