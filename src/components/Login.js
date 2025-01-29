@@ -29,12 +29,7 @@ function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async ({ username, password }) => {
-      console.log('===============rrr=====================');
-      console.log(`${process.env.URL}`);
-      console.log('====================================');
-      console.log('====================================');
-      console.log('sasasa');
-      console.log('====================================');
+ 
       const response = await fetch(`https://api.gppkcbn.org/cbn/v1/user/login`, {
         method: 'POST',
         headers: {

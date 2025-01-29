@@ -6,8 +6,6 @@ import DynamicTable from './DynamicTable';
 import './ArtikelData.css';
 import Swal from 'sweetalert2';
 
-
-
 const ExpandableContent = ({ content }) => {
   const [expanded, setExpanded] = React.useState(false);
 
@@ -39,33 +37,50 @@ function ArtikelData() {
 
   // Fetch data artikel
   const fetchArtikelData = async () => {
-    const response = await fetch(`http://${process.env.URL}/cbn/v1/artikel/getAllArticle`);
-    const data = await response.json();
-    return data.data;
+    try {
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/getAllArticle`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch articles');
+      }
+      const data = await response.json();
+      console.log('================tt====================');
+      console.log(data);
+      console.log('====================================');
+      return data.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   };
 
   // Delete artikel
   const deleteArtikel = async (id) => {
-    const response = await fetch(`http://${process.env.URL}/cbn/v1/artikel/deleteOneData`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({ id: id }),
-    });
+    try {
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/deleteOneData`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ id: id }),
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to delete article: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error('Failed to delete article');
+      }
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message);
     }
-
-    return response.json();
   };
-
   const { data, isLoading, error } = useQuery({
     queryKey: ['artikelData'],
     queryFn: fetchArtikelData,
+    onSuccess: (data) => {
+      if (!Array.isArray(data.data)) {
+        throw new Error('Data should be an array');
+      }
+    },
   });
-
+  
   const deleteMutation = useMutation({
     mutationFn: deleteArtikel,
     onSuccess: () => {
@@ -109,7 +124,7 @@ function ArtikelData() {
     {
       key: 'content',
       label: 'Konten',
-      render: (item) => <ExpandableContent content={item.content} />,
+      render: (item) => <ExpandableContent content={item.content}/>,
     },
     { key: 'kategori', label: 'Kategori' },
     {

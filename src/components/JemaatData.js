@@ -13,7 +13,7 @@ const columns = [
 ];
 function JemaatData() {
   const fetchDoaData = async () => {
-    const response = await fetch(`http://${process.env.URL}/cbn/v1/service/doa/getAll`);
+    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/doa/getAll`);
 
     
     const data = await response.json();

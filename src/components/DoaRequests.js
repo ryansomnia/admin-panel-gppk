@@ -14,11 +14,14 @@ const columns = [
 
 function DoaRequests() {
   const fetchDoaData = async () => {
-    const response = await fetch(`http://${process.env.URL}/cbn/v1/service/doa/getAll`);
+    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/doa/getAll`);
 
     
     const data = await response.json();
- 
+    console.log('====================================');
+    console.log(data.data);
+    console.log('====================================');
+
     return data.data; // Mengambil array `data` dari response
   };
 
