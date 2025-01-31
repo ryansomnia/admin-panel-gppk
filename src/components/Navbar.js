@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { useMutation } from '@tanstack/react-query';
 import { GrArticle } from "react-icons/gr";
-import { FaUsers, FaPray, FaBook } from 'react-icons/fa';
+import { FaUsers, FaPray, FaBook, FaYoutube, FaNetworkWired, FaTree, FaBaby, FaChurch, FaPhone } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 function Navbar() {
@@ -65,11 +65,23 @@ function Navbar() {
           </NavLink>
         </li>
         <li>
+          <NavLink to="kka" className="navbar-link">
+            <FaChurch className="navbar-icon" />
+            Data KKA
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="pastoral" className="navbar-link">
+            <FaPhone className="navbar-icon" />
+            Pastoral Center
+          </NavLink>
+        </li>
+        {/* <li>
           <NavLink to="jemaat" className="navbar-link">
             <FaUsers className="navbar-icon" />
             Data Kartu Jemaat
           </NavLink>
-        </li>
+        </li> */}
         <li>
           <NavLink to="doa" className="navbar-link">
             <FaPray className="navbar-icon" />
@@ -77,11 +89,18 @@ function Navbar() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="renungan" className="navbar-link">
-            <FaBook className="navbar-icon" />
-            Data Renungan KKA
+          <NavLink to="youtube" className="navbar-link">
+            <FaYoutube className="navbar-icon" />
+            Data Link Youtube
           </NavLink>
         </li>
+        <li>
+          <NavLink to="cabang" className="navbar-link">
+            <FaTree className="navbar-icon" />
+            Data Cabang
+          </NavLink>
+        </li>
+       
         <li>
           <button onClick={handleLogout} className="navbar-link logout-button">
             Logout

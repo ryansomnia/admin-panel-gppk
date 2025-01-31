@@ -143,7 +143,7 @@ function ArtikelData() {
       render: (item) => (
         <div className="actions">
           <button className="btn-delete" onClick={() => handleDelete(item.idArtikel)}>Hapus</button>
-          <button className="btn-secondary" onClick={() => navigate(`/edit-article/${item.idArtikel}`)}>Edit</button>
+          <button className="btn-secondary" onClick={() => navigate(`/dashboard/edit-article/${item.idArtikel}`)}>Edit</button>
         </div>
       ),
     },

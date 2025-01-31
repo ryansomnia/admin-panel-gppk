@@ -8,6 +8,12 @@ import DoaRequests from './components/DoaRequests';
 import KkaMeditation from './components/KKAMeditation';
 import ArtikelData from './components/ArtikelData';
 import AddArtikel from './components/AddArtikel';
+import EditArtikel from './components/EditArtikel';
+import LinkYoutube from './components/LinkYoutube';
+import AddYoutube from './components/AddYoutube';
+import Cabang from './components/Cabang';
+import AddCabang from './components/AddCabang';
+
 // port =3011
 function App() {
   return (
@@ -18,6 +24,16 @@ function App() {
           {/* Path child harus relatif */}
           <Route path="artikel" element={<ArtikelData />} />
           <Route path="add-article" element={<AddArtikel />} />
+          <Route path="add-youtube" element={<AddYoutube />} />
+          <Route path="add-article" element={<EditArtikel />} />
+          <Route path="add-cabang" element={<AddCabang />} />
+
+          <Route path="kka" element={<KkaMeditation />} />
+          <Route path="youtube" element={<LinkYoutube/>} />
+          <Route path="cabang" element={<Cabang/>} />
+
+
+          
           <Route path="jemaat" element={<JemaatData />} />
           <Route path="service" element={<ServiceData />} />
           <Route path="doa" element={<DoaRequests />} />

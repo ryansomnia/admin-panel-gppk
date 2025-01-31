@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Grid, Box, Paper } from '@mui/material';
+import { TextField, Button, Typography, Grid, Box, Paper, CircularProgress } from '@mui/material';
 import Swal from 'sweetalert2';
 
 function AddArtikel() {
@@ -10,6 +10,7 @@ function AddArtikel() {
     tag: '',
     image: null,
   });
+  const [isLoading, setIsLoading] = useState(false); // State untuk loading
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +21,7 @@ function AddArtikel() {
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validasi sederhana
@@ -34,24 +35,59 @@ function AddArtikel() {
       return;
     }
 
-    // Tambah logika pengiriman data ke backend
-    console.log('Data artikel:', formData);
+    // Membuat objek FormData
+    const data = new FormData();
+    data.append('judulArtikel', formData.judulArtikel);
+    data.append('isiArtikel', formData.isiArtikel);
+    data.append('kategori', formData.kategori);
+    data.append('tag', formData.tag);
+    data.append('image', formData.image);
 
-    Swal.fire({
-      title: 'Sukses',
-      text: 'Artikel berhasil ditambahkan!',
-      icon: 'success',
-      confirmButtonText: 'OK',
-    });
+    setIsLoading(true); // Mulai loading
 
-    // Reset form setelah submit
-    setFormData({
-      judulArtikel: '',
-      isiArtikel: '',
-      kategori: '',
-      tag: '',
-      image: null,
-    });
+    try {
+      // Mengirim data ke API
+      const response = await fetch('https://api.gppkcbn.org/cbn/v1/artikel/addOneArticle', {
+        method: 'POST',
+        body: data,
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: 'Sukses',
+          text: 'Artikel berhasil ditambahkan!',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        });
+
+        // Reset form setelah submit
+        setFormData({
+          judulArtikel: '',
+          isiArtikel: '',
+          kategori: '',
+          tag: '',
+          image: null,
+        });
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: result.message || 'Gagal menambahkan artikel',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Terjadi kesalahan saat mengirim data',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setIsLoading(false); // Selesai loading
+    }
   };
 
   return (
@@ -72,11 +108,12 @@ function AddArtikel() {
                 onChange={handleInputChange}
                 fullWidth
                 required
+                disabled={isLoading} // Nonaktifkan input saat loading
               />
             </Grid>
 
             {/* Isi Artikel (Kiri) dan Preview Artikel (Kanan) */}
-            <Grid container spacing={3} style={{marginTop:'0px'}}>
+            <Grid container spacing={3} style={{ marginTop: '0px' }}>
               <Grid item xs={12} md={6}>
                 <Paper elevation={3} style={{ padding: '20px' }}>
                   <TextField
@@ -90,6 +127,7 @@ function AddArtikel() {
                     onChange={handleInputChange}
                     required
                     style={{ marginBottom: '20px' }}
+                    disabled={isLoading} // Nonaktifkan input saat loading
                   />
                 </Paper>
               </Grid>
@@ -98,7 +136,7 @@ function AddArtikel() {
                   <Typography variant="h6" gutterBottom>
                     Preview Artikel
                   </Typography>
-                 
+
                   <div
                     style={{
                       border: '1px solid #ddd',
@@ -115,7 +153,7 @@ function AddArtikel() {
             </Grid>
 
             {/* Kategori (Kiri) dan Tag (Kanan) */}
-            <Grid container spacing={3} style={{marginTop:'50px'}}>
+            <Grid container spacing={3} style={{ marginTop: '50px' }}>
               <Grid item xs={12} md={6}>
                 <TextField
                   label="Kategori"
@@ -124,6 +162,7 @@ function AddArtikel() {
                   onChange={handleInputChange}
                   fullWidth
                   required
+                  disabled={isLoading} // Nonaktifkan input saat loading
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -134,19 +173,21 @@ function AddArtikel() {
                   onChange={handleInputChange}
                   fullWidth
                   required
+                  disabled={isLoading} // Nonaktifkan input saat loading
                 />
               </Grid>
             </Grid>
 
             {/* Tombol Upload Gambar */}
             <Grid item xs={12}>
-              <Button variant="contained" component="label" fullWidth>
+              <Button variant="contained" component="label" fullWidth disabled={isLoading}>
                 Upload Gambar
                 <input
                   type="file"
                   hidden
                   onChange={handleFileChange}
                   accept="image/*"
+                  disabled={isLoading} // Nonaktifkan input saat loading
                 />
               </Button>
               {formData.image && (
@@ -158,9 +199,15 @@ function AddArtikel() {
 
             {/* Tombol Submit */}
             <Grid item xs={12}>
-              <Button type="submit" variant="contained" color="primary" fullWidth>
-                Tambah Artikel
-              </Button>
+              {isLoading ? (
+                <Box display="flex" justifyContent="center">
+                  <CircularProgress /> {/* Spinner saat loading */}
+                </Box>
+              ) : (
+                <Button type="submit" variant="contained" color="primary" fullWidth>
+                  Tambah Artikel
+                </Button>
+              )}
             </Grid>
           </Grid>
         </form>
