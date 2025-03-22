@@ -1,41 +1,169 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, Typography, Box, Button, CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import DynamicTable from './DynamicTable';
+import moment from 'moment';
+import Swal from 'sweetalert2';
 
 const columns = [
   { key: 'id', label: 'ID' },
-  { key: 'full_name', label: 'Nama Lengkap' },
-  { key: 'user_name', label: 'Nama Pengguna' },
-  { key: 'contact_info', label: 'Kontak' },
-  { key: 'description', label: 'Deskripsi' },
-  { key: 'tanggal', label: 'Tanggal' },
+  { key: 'name', label: 'KKA' },
+  { key: 'category', label: 'Kategori' },
+  { key: 'leader', label: 'Ketua' },
+  { key: 'area', label: 'Area' },
+  { key: 'day', label: 'Hari' },
+  { key: 'time', label: 'Jam' },
+  {
+    key: 'actions',
+    label: 'Aksi',
+    render: (item) => (
+      <div className="actions">
+        <button className="btn-delete">Hapus</button>
+        <button className="btn-secondary">Edit</button>
+      </div>
+    ),
+  },
 ];
-const bahanColumns =[
-  { key: 'JudulMateri', label: 'JudulMateri' },
-  { key: 'tanggal', label: 'Tanggal' },
-  { key: 'action', label: 'Actions' }
-
-]
 
 function KkaMeditation() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const fetchDataKKA = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/doa/getAll`);
+    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/kka/getAll`);
     const data = await response.json();
-    return data.data; 
+    return data.data;
   };
 
-  const { data, isLoading, error } = useQuery({
+  const fetchDataRenunganKKA = async () => {
+    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/bahanKKA`);
+    const data = await response.json();
+    return data.data;
+  };
+
+  
+
+  const deleteRenungan = async (id) => {
+    try {
+      // Perbaikan: Gunakan POST dan kirim ID dalam body
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/deleteRenungan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ id: id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete Renungan');
+      }
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
+
+  const {
+    data: kkaData,
+    isLoading: kkaIsLoading,
+    error: kkaError,
+  } = useQuery({
     queryKey: ['dataKKA'],
     queryFn: fetchDataKKA,
   });
+
+  const {
+    data: renunganData,
+    isLoading: renunganIsLoading,
+    error: renunganError,
+  } = useQuery({
+    queryKey: ['dataRenunganKKA'],
+    queryFn: fetchDataRenunganKKA,
+  });
+
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteRenungan,
+    onSuccess: () => {
+      // Perbaikan: Invalidate dataRenunganKKA
+      queryClient.invalidateQueries(['dataRenunganKKA']);
+      Swal.fire({
+        title: 'Renungan Berhasil Dihapus',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+    },
+    onError: (error) => {
+      Swal.fire({
+        title: 'Gagal Menghapus Renungan',
+        text: error.message,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    },
+  });
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Artikel ini akan dihapus!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMutation.mutate(id);
+      }
+    });
+  };
+
+  const bahanColumns = [
+    { key: 'judulMateri', label: 'Judul Materi' },
+    {
+      key: 'waktuPembuatan',
+      label: 'Tanggal',
+      render: (item) => moment(item.created_at).format('dddd, DD/MM/YYYY HH:mm'),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (item) => (
+        <div
+          style={{
+            backgroundColor: item.status === '1' ? 'green' : 'black',
+            color: 'white',
+            padding: '5px 10px',
+            borderRadius: '5px',
+            display: 'inline-block',
+          }}
+        >
+          {item.status === '1' ? 'Aktif' : 'Nonaktif'}
+        </div>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Aksi',
+      render: (item) => (
+        <div className="actions">
+          <button className="btn-delete" onClick={() => handleDelete(item.idMateri)}>
+          Hapus
+          </button>
+          <button className="btn-secondary" onClick={() => navigate(`/dashboard/edit-renungan/${item.idMateri}`)}>Edit</button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
         Handle KKA
       </Typography>
-      
+
       {/* Upload Section */}
       <Card sx={{ mb: 3, p: 2 }}>
         <CardContent>
@@ -43,46 +171,52 @@ function KkaMeditation() {
             Upload Bahan KKA
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <Button variant="contained" color="primary">
-              Upload File
+            <Button variant="contained" color="primary" onClick={() => navigate('/dashboard/add-renungan')}>
+              + Upload File
             </Button>
           </Box>
         </CardContent>
         <CardContent>
           <Typography variant="h5" gutterBottom>
-             Bahan KKA
+            Bahan KKA
           </Typography>
-          {/* <DynamicTable columns={bahanColumns} data={data} /> */}
-
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            
-          </Box>
+          {renunganIsLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+              <CircularProgress />
+            </Box>
+          ) : renunganError ? (
+            <Typography color="error">
+              There was an error loading the Bahan KKA data.
+            </Typography>
+          ) : (
+            <DynamicTable columns={bahanColumns} data={renunganData} />
+          )}
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}></Box>
         </CardContent>
-       
       </Card>
+
       <Card>
-      <CardContent>
+        <CardContent>
           <Typography variant="h5" gutterBottom>
-           Kesaksian KKA
+            Kesaksian KKA
           </Typography>
-          {/* <DynamicTable columns={columns} data={data} /> */}
-
         </CardContent>
       </Card>
+
       {/* Table Section */}
       <Card>
         <CardContent>
           <Typography variant="h5" gutterBottom>
             Table KKA
           </Typography>
-          {isLoading ? (
+          {kkaIsLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
               <CircularProgress />
             </Box>
-          ) : error ? (
-            <Typography color="error">There was an error loading the data.</Typography>
+          ) : kkaError ? (
+            <Typography color="error">There was an error loading the KKA data.</Typography>
           ) : (
-            <DynamicTable columns={columns} data={data} />
+            <DynamicTable columns={columns} data={kkaData} />
           )}
         </CardContent>
       </Card>

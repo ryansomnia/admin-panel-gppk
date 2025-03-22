@@ -5,7 +5,7 @@ const DynamicTable = ({ columns, data }) => {
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'ascending' });
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 5;
 
   const sortedData = React.useMemo(() => {
     let sortableData = [...data];
