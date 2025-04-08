@@ -84,6 +84,71 @@ function Pastoral() {
       throw new Error(error.message);
     }
   };
+  const deleteKonseling = async (id) => {
+    try {
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/konseling/deleteOneData`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ id: id }),
+      });
+      if (!response.ok) throw new Error('Failed to delete data');
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  const deletePelayan = async (id) => {
+    try {
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pelayan/deleteOneData`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ id: id }),
+      });
+      if (!response.ok) throw new Error('Failed to delete data');
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  const deletePernikahan = async (id) => {
+    try {
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pernikahan/deleteOneData`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ id: id }),
+      });
+      if (!response.ok) throw new Error('Failed to delete data');
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  const deletePemberkatanRumah = async (id) => {
+    try {
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pemberkatanRumah/deleteOneData`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ id: id }),
+      });
+      if (!response.ok) throw new Error('Failed to delete data');
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+  const deletePenyerahanAnak = async (id) => {
+    try {
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/penyerahanAnak/deleteOneData`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ id: id }),
+      });
+      if (!response.ok) throw new Error('Failed to delete data');
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
 
 
   const columnsBaptism = [
@@ -98,7 +163,7 @@ function Pastoral() {
       label: 'Aksi',
       render: (item) => (
         <div className="actions">
-          <button className="btn btn-delete" onClick={() => handleDelete(item.id)}>Hapus</button>
+          <button className="btn btn-delete" onClick={() => handleDeleteBaptism(item.id)}>Hapus</button>
           <button className="btn btn-secondary">Edit</button>
           <button className="btn btn-detail" onClick={() => navigate(`/dashboard/detail-baptisan/${item.id}`)}>Detail</button>
         </div>
@@ -121,7 +186,7 @@ function Pastoral() {
       maxWidth: 150,
       render: (item) => (
         <div className="actions">
-          <button className="btn btn-delete" onClick={() => handleDelete(item.id)}>Hapus</button>
+          <button className="btn btn-delete" onClick={() => handleDeleteKonseling(item.id)}>Hapus</button>
           <button className="btn btn-secondary">Edit</button>
           <button className="btn btn-detail" onClick={() => navigate(`/dashboard/detail-konseling/${item.id}`)}>Detail</button>
         </div>
@@ -138,7 +203,7 @@ function Pastoral() {
       label: 'Aksi',
       render: (item) => (
         <div className="actions">
-          <button className="btn btn-delete" onClick={() => handleDelete(item.id)}>Hapus</button>
+          <button className="btn btn-delete" onClick={() => handleDeletePelayan(item.id)}>Hapus</button>
           <button className="btn btn-secondary">Edit</button>
         </div>
       ),
@@ -157,7 +222,7 @@ function Pastoral() {
        maxWidth: 150,
        render: (item) => (
          <div className="actions">
-           <button className="btn btn-delete" onClick={() => handleDelete(item.id)}>Hapus</button>
+           <button className="btn btn-delete" onClick={() => handleDeletePernikahan(item.id)}>Hapus</button>
            <button className="btn btn-secondary">Edit</button>
            <button className="btn btn-detail" onClick={() => navigate(`/dashboard/detail-konseling/${item.id}`)}>Detail</button>
 
@@ -177,7 +242,7 @@ function Pastoral() {
        maxWidth: 150,
        render: (item) => (
          <div className="actions">
-           <button className="btn btn-delete" onClick={() => handleDelete(item.id)}>Hapus</button>
+           <button className="btn btn-delete" onClick={() => handleDeletePemberkatanRumah(item.id)}>Hapus</button>
               </div>
        ),
      },
@@ -198,7 +263,7 @@ function Pastoral() {
       maxWidth: 150,
       render: (item) => (
         <div className="actions">
-          <button className="btn btn-delete" onClick={() => handleDelete(item.id)}>Hapus</button>
+          <button className="btn btn-delete" onClick={() => handleDeletePenyerahanAnak(item.id)}>Hapus</button>
           <button className="btn btn-secondary">Edit</button>
           <button className="btn btn-detail" onClick={() => navigate(`/dashboard/detail-konseling/${item.id}`)}>Detail</button>
 
@@ -237,27 +302,72 @@ function Pastoral() {
   const { data: dataAnak, isLoading: loadingAnak, error: errorAnak } = useQuery({ queryKey: ['dataAnak'], queryFn: fetchDataAnak });
 
 
-  const deleteMutation = useMutation({
+  const deleteMutationBaptism = useMutation({
     mutationFn: deleteBaptism,
     onSuccess: () => {
-      queryClient.invalidateQueries(['dataBaptism']); // Corrected query key
-      Swal.fire({
-        title: ' Berhasil Dihapus',
-        icon: 'success',
-        confirmButtonText: 'OK',
-      });
+      queryClient.invalidateQueries(['dataBaptism']);
+      Swal.fire({ title: 'Berhasil Dihapus', icon: 'success', confirmButtonText: 'OK' });
     },
     onError: (error) => {
-      Swal.fire({
-        title: 'Gagal Menghapus ',
-        text: error.message,
-        icon: 'error',
-        confirmButtonText: 'OK',
-      });
+      Swal.fire({ title: 'Gagal Menghapus ', text: error.message, icon: 'error', confirmButtonText: 'OK' });
     },
   });
 
-  const handleDelete = (id) => {
+  const deleteMutationKonseling = useMutation({
+    mutationFn: deleteKonseling,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dataKonseling']);
+      Swal.fire({ title: 'Berhasil Dihapus', icon: 'success', confirmButtonText: 'OK' });
+    },
+    onError: (error) => {
+      Swal.fire({ title: 'Gagal Menghapus ', text: error.message, icon: 'error', confirmButtonText: 'OK' });
+    },
+  });
+  const deleteMutationPelayan = useMutation({
+    mutationFn: deletePelayan,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dataPelayan']);
+      Swal.fire({ title: 'Berhasil Dihapus', icon: 'success', confirmButtonText: 'OK' });
+    },
+    onError: (error) => {
+      Swal.fire({ title: 'Gagal Menghapus ', text: error.message, icon: 'error', confirmButtonText: 'OK' });
+    },
+  });
+
+  const deleteMutationPernikahan = useMutation({
+    mutationFn: deletePernikahan,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dataPernikahan']);
+      Swal.fire({ title: 'Berhasil Dihapus', icon: 'success', confirmButtonText: 'OK' });
+    },
+    onError: (error) => {
+      Swal.fire({ title: 'Gagal Menghapus ', text: error.message, icon: 'error', confirmButtonText: 'OK' });
+    },
+  });
+  const deleteMutationPemberkatanRumah = useMutation({
+    mutationFn: deletePemberkatanRumah,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dataRumah']);
+      Swal.fire({ title: 'Berhasil Dihapus', icon: 'success', confirmButtonText: 'OK' });
+    },
+    onError: (error) => {
+      Swal.fire({ title: 'Gagal Menghapus ', text: error.message, icon: 'error', confirmButtonText: 'OK' });
+    },
+  });
+  const deleteMutationPenyerahanAnak = useMutation({
+    mutationFn: deletePenyerahanAnak,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dataAnak']);
+      Swal.fire({ title: 'Berhasil Dihapus', icon: 'success', confirmButtonText: 'OK' });
+    },
+    onError: (error) => {
+      Swal.fire({ title: 'Gagal Menghapus ', text: error.message, icon: 'error', confirmButtonText: 'OK' });
+    },
+  });
+
+
+  
+  const handleDeleteBaptism = (id) => {
     Swal.fire({
       title: 'Apakah Anda yakin?',
       text: 'Data ini akan dihapus!',
@@ -267,7 +377,77 @@ function Pastoral() {
       cancelButtonText: 'Batal',
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteMutation.mutate(id);
+        deleteMutationBaptism.mutate(id);
+      }
+    });
+  };
+  const handleDeleteKonseling = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Data ini akan dihapus!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMutationKonseling.mutate(id);
+      }
+    });
+  };
+  const handleDeletePelayan = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Data ini akan dihapus!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMutationPelayan.mutate(id);
+      }
+    });
+  };
+  const handleDeletePernikahan = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Data ini akan dihapus!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+      deleteMutationPernikahan.mutate(id);
+      }
+    });
+  };
+  const handleDeletePemberkatanRumah = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Data ini akan dihapus!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+       deleteMutationPemberkatanRumah.mutate(id);
+      }
+    });
+  };
+  const handleDeletePenyerahanAnak = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Data ini akan dihapus!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+      deleteMutationPenyerahanAnak.mutate(id);
       }
     });
   };
@@ -279,9 +459,9 @@ function Pastoral() {
         {loadingBaptism ? <CircularProgress /> : errorBaptism ? <Typography color="error">Error loading data.</Typography> : <DynamicTable columns={columnsBaptism} data={dataBaptism} />}
       </div>
       <div className="mb-10">
-        <h2>Permohonan Konseling</h2>
-        {loadingKonseling ? <CircularProgress /> : errorKonseling ? <Typography color="error">Error loading data.</Typography> : <DynamicTable columns={columnsKonseling} data={dataKonseling} />}
-      </div>
+       <h2>Permohonan Konseling</h2>
+       {loadingKonseling ? <CircularProgress /> : errorKonseling ? <Typography color="error">Error loading data.</Typography> : <DynamicTable columns={columnsKonseling} data={dataKonseling} />}
+       </div>
      {/* <div className="mb-10">
         <h2>Permohonan Kartu Jemaat</h2>
         {loadingKartuJemaat ? <CircularProgress /> : errorKartuJemaat ? <Typography color="error">Error loading data.</Typography> : <DynamicTable columns={columnsKartu} data={dataKartuJemaat} />}

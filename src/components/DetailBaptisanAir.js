@@ -2,72 +2,169 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
-import { Button, Paper, Typography, Box, CircularProgress } from '@mui/material';
-import { PDFDownloadLink, Image, Page, Text, View, Document, StyleSheet, Font } from '@react-pdf/renderer';
-import kopImage from '../images/kopgppk.png'; // Impor gambar kop
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Paper,
+  Typography
+} from '@mui/material';
+import {
+  PDFDownloadLink,
+  Image,
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Font
+} from '@react-pdf/renderer';
+import kopImage from '../images/kopgppk.png';
 
+// Registrasi font
 Font.register({
   family: 'Helvetica',
   fonts: [
-    { src: 'https://fonts.gstatic.com/s/helvetica/v20/oYpQySZ43eM7RG0YtEemzH0.ttf' },
-    { src: 'https://fonts.gstatic.com/s/helvetica/v20/oYpQySZ43eM7RG0YtEemzH0.ttf', fontWeight: 'bold' },
-  ],
+    {
+      src: 'https://fonts.gstatic.com/s/helvetica/v20/oYpQySZ43eM7RG0YtEemzH0.ttf'
+    },
+    {
+      src: 'https://fonts.gstatic.com/s/helvetica/v20/oYpQySZ43eM7RG0YtEemzH0.ttf',
+      fontWeight: 'bold'
+    }
+  ]
 });
+
+// Gaya untuk dokumen PDF
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 40,
+    fontFamily: 'Helvetica',
+    fontSize: 11,
+    lineHeight: 1.4
   },
-  body:{
-    lineHeight: 1.6,
-    margin: 0,
-    padding: '20px'
+  headerContainer: {
+    alignItems: 'center',
+    marginBottom: 10
   },
-  container:{
-    maxWidth: '800px',
-    margin: '0 auto'
+  headerImage: {
+    width: 500, // sesuaikan lebar gambar kop
+    height: 'auto'
   },
-
-  formTitle: {
-    textAlign: 'center',
-    marginBottom: 0, // Sesuaikan margin sesuai kebutuhan
+ 
+  sectionContainer: {
+    marginBottom: 10,
+    paddingHorizontal: 10
   },
-  formSection: {
-    marginBottom: 0, // Sesuaikan margin sesuai kebutuhan
-    paddingVertical: 2, // Tambahkan padding vertikal jika perlu
-
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 4
   },
   formRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 0, // atau nilai yang lebih kecil seperti 2 atau 3
+    marginBottom: 4
+  },
+  label: {
+    width: '30%',
+    fontSize: 9
+  },
+  value: {
+    width: '70%',
+    textDecoration: 'underline',
+    fontSize: 9
 
   },
-  text: {
-    fontFamily: 'Helvetica',
-    fontSize: 11,
-    marginBottom: 0, // atau nilai yang lebih kecil seperti 2 atau 3
-padding:0
+  statementText: {
+    marginTop: 10,
+    marginBottom: 4,
+    fontStyle: 'italic'
   },
-  // header: {
-  //   fontSize: 18,
-  //   marginBottom: 10,
-  //   textAlign: 'center',
-  // },
-  // subHeader: {
-  //   fontSize: 14,
-  //   marginBottom: 10,
-  //   textAlign: 'center',
-  // },
-  // statement: {
-  //   fontSize: 12,
-  //   marginBottom: 20,
-  //   textAlign: 'center',
-  //   fontStyle: 'italic',
-  // },
-  // signature: {
-  //   marginTop: 20,
-  //   textAlign: 'center',
-  // },
+  signatureSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20
+  },
+  signatureBox: {
+    width: '45%'
+  },
+  signatureLine: {
+    marginTop: 30,
+    borderBottomWidth: 1,
+    borderBottomColor: '#000',
+    width: '70%'
+  },
+  footerText: {
+    textAlign: 'center',
+    marginTop: 20
+  },
+
+  // Style untuk Tabel Keluarga
+  table: {
+    display: 'table',
+    width: 'auto',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  tableRow: {
+    flexDirection: 'row'
+  },
+  // Tiap kolom beri lebar sesuai jumlah kolom total
+  // Mis. 5% utk No, 15% utk Nama, dst. Sesuaikan agar total 100%
+  tableColNo: {
+    width: '5%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  tableColNama: {
+    width: '20%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  tableColHubKeluarga: {
+    width: '20%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  tableColStatus: {
+    width: '15%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  tableColUsia: {
+    width: '10%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  tableColAgama: {
+    width: '10%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  tableColBaptis: {
+    width: '20%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000'
+  },
+  // Style untuk sel (isi)
+  tableCell: {
+    margin: 2,
+    fontSize: 10
+  },
+  // Style untuk header sel
+  tableCellHeader: {
+    margin: 2,
+    fontSize: 10,
+    fontWeight: 'bold'
+  }
 });
 
 function DetailBaptisanAir() {
@@ -89,14 +186,16 @@ function DetailBaptisanAir() {
     kepercayaanLama: '',
     jumlahKeluarga: '',
     keluarga: [],
-    pernyataan: false,
+    pernyataan: false
   });
 
+  // Contoh penggunaan React Query untuk mengambil data
   const { data: dataBaptism, isLoading, error } = useQuery({
-    queryKey: ['dataBaptism'],
-    // queryFn dapat ditambahkan jika Anda mengambil data dari API di sini
+    queryKey: ['dataBaptism']
+    // queryFn: ... // Tambahkan fungsi fetch data jika diperlukan
   });
 
+  // Set data dari hasil fetch
   useEffect(() => {
     if (dataBaptism && id) {
       const baptism = dataBaptism.find((item) => item.id === parseInt(id));
@@ -115,201 +214,422 @@ function DetailBaptisanAir() {
           kepercayaanLama: baptism.KepercayaanLama || '',
           jumlahKeluarga: baptism.JumlahKeluarga || '',
           keluarga: baptism.Keluarga || [],
-          pernyataan: baptism.Pernyataan || false,
+          pernyataan: baptism.Pernyataan || false
         });
       }
     }
   }, [dataBaptism, id]);
 
   if (isLoading) return <CircularProgress />;
-  // if (error) return <Typography color="error">Error loading data.</Typography>;
   if (!dataBaptism) return <Typography>Data not found.</Typography>;
 
+   // Persiapan data untuk tabel keluarga
+   let familyRows;
+   if (formData.keluarga.length > 5) {
+     // Jika data keluarga lebih dari 5, tampilkan semua
+     familyRows = formData.keluarga.map((item, i) => (
+       <View style={styles.tableRow} key={i}>
+         <View style={styles.tableColNo}>
+           <Text style={styles.tableCell}>{i + 1}</Text>
+         </View>
+         <View style={styles.tableColNama}>
+           <Text style={styles.tableCell}>{item.nama || ''}</Text>
+         </View>
+         <View style={styles.tableColHubKeluarga}>
+           <Text style={styles.tableCell}>{item.hubungan || ''}</Text>
+         </View>
+         <View style={styles.tableColStatus}>
+           <Text style={styles.tableCell}>{item.statusMenikah || ''}</Text>
+         </View>
+         <View style={styles.tableColUsia}>
+           <Text style={styles.tableCell}>{item.usia || ''}</Text>
+         </View>
+         <View style={styles.tableColAgama}>
+           <Text style={styles.tableCell}>{item.agama || ''}</Text>
+         </View>
+         <View style={styles.tableColBaptis}>
+           <Text style={styles.tableCell}>{item.sudahDibaptis|| ''}</Text>
+         </View>
+       </View>
+     ));
+   } else {
+     // Jika data keluarga <= 5, buat array sepanjang 5 dan isi sesuai data (jika ada), sisanya kosong
+     familyRows = Array(5)
+       .fill(null)
+       .map((_, i) => {
+         const item = formData.keluarga[i] || {}; // jika data belum ada, item akan kosong
+         return (
+           <View style={styles.tableRow} key={i}>
+             <View style={styles.tableColNo}>
+               <Text style={styles.tableCell}>{i + 1}</Text>
+             </View>
+             <View style={styles.tableColNama}>
+               <Text style={styles.tableCell}>{item.nama || ''}</Text>
+             </View>
+             <View style={styles.tableColHubKeluarga}>
+               <Text style={styles.tableCell}>{item.hubungan || ''}</Text>
+             </View>
+             <View style={styles.tableColStatus}>
+               <Text style={styles.tableCell}>{item.statusMenikah || ''}</Text>
+             </View>
+             <View style={styles.tableColUsia}>
+               <Text style={styles.tableCell}>{item.usia || ''}</Text>
+             </View>
+             <View style={styles.tableColAgama}>
+               <Text style={styles.tableCell}>{item.agama || ''}</Text>
+             </View>
+             <View style={styles.tableColBaptis}>
+               <Text style={styles.tableCell}>{item.sudahDibaptis|| ''}</Text>
+             </View>
+           </View>
+         );
+       });
+   }
+ 
+  // Dokumen PDF
   const MyDocument = (
     <Document>
       <Page style={styles.page}>
-        <View style={styles.body}>
-          <View style={styles.container}></View>
-          <Image src="/images/kopgppk.png" style={styles.logo} />
-
-  <View style={styles.formSection}>
-    <View style={styles.formRow}>
-      <Text style={styles.text}>Nama Lengkap: {formData.namaLengkap}</Text>
-     </View>
-     <View style={styles.formRow}>
-      <Text style={styles.text}>TTL: {formData.tempatLahir}, { moment(formData.tanggalLahir).format('DD-MM-YYYY') }</Text>
-     </View>
-     <View style={styles.formRow}>
-      <Text style={styles.text}>Nomor Handphone: {formData.noHP}</Text>
-     </View>
-     <View style={styles.formRow}>
-      <Text style={styles.text}>Alamat: {formData.alamat}</Text>
-     </View>
-     <View style={styles.formRow}>
-      <Text style={styles.text}>Pendidikan Terakhir: {formData.pendidikanTerakhir}</Text>
-     </View>
-     <View style={styles.formRow}>
-      <Text style={styles.text}>Pekerjaan: {formData.pekerjaan}</Text>
-     </View>
-     <View style={styles.formRow}>
-      <Text style={styles.text}>KKA: {formData.kka}</Text>
-     </View>
-     <View style={styles.formRow}>
-      <Text style={styles.text}>Status: {formData.status}</Text>
-     </View>
-     <View style={styles.formRow}>
-      <Text style={styles.text}>Kepercayaan Lama: {formData.kepercayaanLama}</Text>
-     </View>
-  </View>
-
-
-
-        
+        {/* Header hanya menggunakan gambar kop */}
+        <View style={styles.headerContainer}>
+          <Image src={kopImage} style={styles.headerImage} />
         </View>
 
-{/*        
-        <View style={styles.section}>
-          <Text style={styles.text}><strong>Nama Lengkap:</strong> {formData.namaLengkap}</Text>
-          <Text style={styles.text}><strong>Tempat/Tanggal Lahir:</strong> {formData.tempatLahir}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}</Text>
-          <Text style={styles.text}><strong>No Telp/HP:</strong> {formData.noHP}</Text>
-          <Text style={styles.text}><strong>Alamat Rumah:</strong> {formData.alamat}</Text>
-          <Text style={styles.text}><strong>Jenis Kelamin:</strong> {formData.jenisKelamin}</Text>
-          <Text style={styles.text}><strong>Status Pernikahan:</strong> {formData.status}</Text>
-          <Text style={styles.text}><strong>Pekerjaan:</strong> {formData.pekerjaan}</Text>
+        {/* <View style={styles.divider} /> */}
+
+        {/* Data Diri */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Nama Lengkap</Text>
+            <Text style={styles.value}>: {formData.namaLengkap || ' '}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Tempat/Tgl Lahir</Text>
+            <Text style={styles.value}>: {formData.tempatLahir}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}
+            </Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Alamat</Text>
+            <Text style={styles.value}>: {formData.alamat}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>No. HP</Text>
+            <Text style={styles.value}>: {formData.noHP}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Pendidikan</Text>
+            <Text style={styles.value}>: {formData.pendidikanTerakhir}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Pekerjaan</Text>
+            <Text style={styles.value}>: {formData.pekerjaan}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>KKA</Text>
+            <Text style={styles.value}>: {formData.kka}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Status</Text>
+            <Text style={styles.value}>
+            : {formData.status}{' '}
+            {formData.tanggalMenikah ? `(Menikah pada ${moment(formData.tanggalMenikah).format('DD-MM-YYYY')})` : ''}
+            </Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Kepercayaan Lama</Text>
+            <Text style={styles.value}>: {formData.kepercayaanLama}</Text>
+          </View>
         </View>
-        <View style={styles.signature}>
-          <Text style={styles.text}>Saya yang bertanda tangan di bawah ini menyatakan bahwa saya percaya kepada TUHAN YESUS KRISTUS untuk pengampunan dosa-dosa saya dan menerima-Nya sebagai Tuhan dan Juruselamat pribadi saya.</Text>
-          <Text style={styles.text}><strong>Nama Lengkap:</strong> {formData.namaLengkap}</Text>
-          <Text style={styles.text}><strong>Tanggal:</strong> {moment().format('DD-MM-YYYY')}</Text>
-          <Text style={styles.text}><strong>Tanda Tangan:</strong> ______________________</Text>
+
+        {/* <View style={styles.divider} /> */}
+ {/* Bagian Keluarga */}
+ <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Penjelasan Mengenai Keluarga</Text>
+          <View style={styles.table}>
+            {/* Header Tabel */}
+            <View style={styles.tableRow}>
+              <View style={styles.tableColNo}>
+                <Text style={styles.tableCellHeader}>No</Text>
+              </View>
+              <View style={styles.tableColNama}>
+                <Text style={styles.tableCellHeader}>Nama</Text>
+              </View>
+              <View style={styles.tableColHubKeluarga}>
+                <Text style={styles.tableCellHeader}>Hub. Keluarga (Dengan Anda)</Text>
+              </View>
+              <View style={styles.tableColStatus}>
+                <Text style={styles.tableCellHeader}>Status Menikah/Belum</Text>
+              </View>
+              <View style={styles.tableColUsia}>
+                <Text style={styles.tableCellHeader}>Usia</Text>
+              </View>
+              <View style={styles.tableColAgama}>
+                <Text style={styles.tableCellHeader}>Agama</Text>
+              </View>
+              <View style={styles.tableColBaptis}>
+                <Text style={styles.tableCellHeader}>Sudah Dibaptis Selam/Belum</Text>
+              </View>
+            </View>
+            {/* Isi Tabel */}
+            {familyRows}
+          </View>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.text}><strong>Dibaptiskan oleh:</strong> {formData.dibaptiskanOleh}</Text>
-          <Text style={styles.text}><strong>Tanggal Baptisan:</strong> {formData.tanggalBaptisan}</Text>
-          <Text style={styles.text}><strong>Tempat Baptisan:</strong> {formData.tempatBaptisan}</Text>
+        {/* Pernyataan */}
+        <View style={styles.sectionContainer}>
+        <Text style={{ textAlign: 'center', fontStyle: 'italic', fontSize: 9}}>
+    “Saya mengaku dengan mulut saya bahwa YESUS KRISTUS adalah TUHAN dan saya percaya di dalam hati bahwa TUHAN telah membangkitkan DIA dari antara orang mati.
+    Saya percaya dan saya mau di BAPTIS, maka saya selamat.” (Markus 16:16; Roma 10:9)
+  </Text>
+  <Text style={[styles.statementText, { textAlign: 'center', fontSize: 9 }]}>
+    Dengan ini saya menyatakan menerima BAPTISAN SELAM atas keyakinan dan kehendak saya sendiri.
+  </Text>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.text}><strong>Catatan Penggembalaan:</strong> {formData.catatanPenggembalaan}</Text>
-        </View>  */}
+
+        {/* <View style={styles.divider} /> */}
+
+        {/* Bagian Tanda Tangan */}
+        <View style={styles.signatureSection}>
+          <View style={styles.signatureBox}>
+            <Text style={{ marginBottom: 10, fontWeight: 'bold' }}>Diisi oleh Sekretariat</Text>
+            <Text>Tempat/Tgl Baptis: ........................................</Text>
+            <Text>Pelaksana: ........................................</Text>
+            <Text>Saksi: ........................................</Text>
+
+            <Text style={{ marginTop: 15 }}>
+              Harap Sertakan Pas Photo 3x4, 2 lembar.
+            </Text>
+          </View>
+          <View style={styles.signatureBox}>
+            <Text>Cibinong, {moment().format('DD-MM-YYYY')}</Text>
+            <Text>Yang mendaftar,</Text>
+            <View style={styles.signatureLine} />
+            <Text>(Nama Jelas)</Text>
+          </View>
+        </View>
+
       </Page>
     </Document>
   );
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Paper elevation={3} sx={{ padding: 4 }}>
-        <Typography variant="h4" gutterBottom>
+         <Typography variant="h4" gutterBottom>
           Detail Formulir Baptisan Air
         </Typography>
-       {/* Bagian Formulir (sesuaikan dengan data Anda) */}
-       <div className="mb-4">
-       <div className="w-full mb-4"> {/* Parent div dengan lebar penuh */}
-                    <img src={kopImage} alt="Kop GPPK" className="w-2 h-auto object-contain" />
-                </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Nama Lengkap:</label>
-            <div className="flex-grow border-b border-gray-400 ml-2"></div>
-          </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Tempat/Tgl Lahir:</label>
-            <div className="flex-grow border-b border-gray-400 ml-2"></div>
-          </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Alamat/No.HP:</label>
-            <div className="flex-grow border-b border-gray-400 ml-2"></div>
-          </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Pendidikan Terakhir:</label>
-            <div className="flex-grow border-b border-gray-400 ml-2"></div>
-          </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Pekerjaan:</label>
-            <div className="flex-grow border-b border-gray-400 ml-2"></div>
-          </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">KKA:</label>
-            <div className="flex-grow border-b border-gray-400 ml-2"></div>
-          </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Status:</label>
-            <label className="mr-2"><input type="radio" name="status" value="menikah" className="mr-1" /> Menikah</label>
-            <label className="mr-2"><input type="radio" name="status" value="belum" className="mr-1" /> Belum</label>
-            <label className="mr-2">Tgl:</label>
-            <div className="w-12 border-b border-gray-400 ml-2"></div>
-          </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Kepercayaan Lama:</label>
-            <label className="mr-2"><input type="radio" name="kepercayaan" value="islam" className="mr-1" /> 1. Islam</label>
-            <label className="mr-2"><input type="radio" name="kepercayaan" value="hindu" className="mr-1" /> 2. Hindu</label>
-            <label className="mr-2"><input type="radio" name="kepercayaan" value="budha" className="mr-1" /> 3. Budha</label>
-            <label className="mr-2"><input type="radio" name="kepercayaan" value="katolik" className="mr-1" /> 4. Katolik</label>
-            <label className="mr-2"><input type="radio" name="kepercayaan" value="lainnya" className="mr-1" /> 5. Lainnya</label>
-          </div>
+      <Paper elevation={3} sx={{ padding: 4 }}>
+        {/* Preview Halaman Web */}
+        <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+          <img
+            src={kopImage}
+            alt="Kop GPPK"
+            style={{ width: '100%', marginBottom: 10 }}
+          />
         </div>
 
-        <div className="mb-4">
-    <h3 className="font-semibold mb-2">Penjelasan Mengenai Keluarga</h3>
-    <div className="overflow-x-auto"> {/* Menambahkan scroll horizontal jika tabel terlalu lebar */}
-        <table className="min-w-full border-collapse border border-gray-500">
+     
+
+         {/* BAGIAN DATA DIRI - WEB PREVIEW */}
+         <div style={{ marginBottom: '1rem' }}>
+          {/* Baris 1 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{ width: '30%', fontWeight: 'bold' }}>
+              Nama Lengkap
+            </div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.namaLengkap}</div>
+          </div>
+          {/* Baris 2 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%', fontWeight: 'bold' }}>
+              Tempat/Tgl Lahir
+            </div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>
+              {formData.tempatLahir}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}
+            </div>
+          </div>
+          {/* Baris 3 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%', fontWeight: 'bold' }}>Alamat</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.alamat}</div>
+          </div>
+          {/* Baris 4 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%', fontWeight: 'bold' }}>No. HP</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.noHP}</div>
+          </div>
+          {/* Baris 5 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%', fontWeight: 'bold' }}>Pendidikan</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.pendidikanTerakhir}</div>
+          </div>
+          {/* Baris 6 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%', fontWeight: 'bold' }}>Pekerjaan</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.pekerjaan}</div>
+          </div>
+          {/* Baris 7 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%', fontWeight: 'bold' }}>KKA</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.kka}</div>
+          </div>
+          {/* Baris 8 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{ width: '30%', fontWeight: 'bold' }}>Status</div>
+
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>
+              {formData.status}{' '}
+              {formData.tanggalMenikah
+                ? `(Menikah pada ${moment(formData.tanggalMenikah).format('DD-MM-YYYY')})`
+                : ''}
+            </div>
+          </div>
+          {/* Baris 9 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%', fontWeight: 'bold' }}>
+              Kepercayaan Lama
+            </div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.kepercayaanLama}</div>
+          </div>
+        </div>
+{/* Tabel Keluarga (untuk preview web, opsional) */}
+<Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+          Penjelasan Mengenai Keluarga
+        </Typography>
+        <div style={{ overflowX: 'auto', marginBottom: '1rem' }}>
+          <table
+            style={{
+              borderCollapse: 'collapse',
+              width: '100%',
+              border: '1px solid #000'
+            }}
+          >
             <thead>
-                <tr className="bg-gray-100">
-                    <th className="border border-gray-500 px-4 py-2">No</th>
-                    <th className="border border-gray-500 px-4 py-2">Nama</th>
-                    <th className="border border-gray-500 px-4 py-2">Hub. Keluarga (Dengan Anda)</th>
-                    <th className="border border-gray-500 px-4 py-2">Status Menikah/Belum</th>
-                    <th className="border border-gray-500 px-4 py-2">Usia</th>
-                    <th className="border border-gray-500 px-4 py-2">Agama</th>
-                    <th className="border border-gray-500 px-4 py-2">Sudah Dibaptis Selam/Belum</th>
-                </tr>
+              <tr style={{ backgroundColor: '#f0f0f0' }}>
+                <th style={{ border: '1px solid #000', padding: '4px' }}>No</th>
+                <th style={{ border: '1px solid #000', padding: '4px' }}>Nama</th>
+                <th style={{ border: '1px solid #000', padding: '4px' }}>
+                  Hub. Keluarga (Dengan Anda)
+                </th>
+                <th style={{ border: '1px solid #000', padding: '4px' }}>
+                  Status Menikah/Belum
+                </th>
+                <th style={{ border: '1px solid #000', padding: '4px' }}>Usia</th>
+                <th style={{ border: '1px solid #000', padding: '4px' }}>Agama</th>
+                <th style={{ border: '1px solid #000', padding: '4px' }}>
+                  Sudah Dibaptis Selam/Belum
+                </th>
+              </tr>
             </thead>
             <tbody>
-                {Array.from({ length: 10 }).map((_, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}> {/* Memberikan warna selang-seling pada baris */}
-                        <td className="border border-gray-500 px-4 py-2">{index + 1}</td>
-                        <td className="border border-gray-500 px-4 py-2"></td>
-                        <td className="border border-gray-500 px-4 py-2"></td>
-                        <td className="border border-gray-500 px-4 py-2"></td>
-                        <td className="border border-gray-500 px-4 py-2"></td>
-                        <td className="border border-gray-500 px-4 py-2"></td>
-                        <td className="border border-gray-500 px-4 py-2"></td>
+              {formData.keluarga.length > 5
+                ? formData.keluarga.map((item, i) => (
+                    <tr key={i}>
+                      <td style={{ border: '1px solid #000', padding: '4px' }}>{i + 1}</td>
+                      <td style={{ border: '1px solid #000', padding: '4px' }}>
+                        {item.nama || ''}
+                      </td>
+                      <td style={{ border: '1px solid #000', padding: '4px' }}>
+                        {item.hubungan || ''}
+                      </td>
+                      <td style={{ border: '1px solid #000', padding: '4px' }}>
+                        {item.statusMenikah || ''}
+                      </td>
+                      <td style={{ border: '1px solid #000', padding: '4px' }}>
+                        {item.usia || ''}
+                      </td>
+                      <td style={{ border: '1px solid #000', padding: '4px' }}>
+                        {item.agama || ''}
+                      </td>
+                      <td style={{ border: '1px solid #000', padding: '4px' }}>
+                        {item.sudahDibaptis|| ''}
+                      </td>
                     </tr>
-                ))}
+                  ))
+                : Array(5)
+                    .fill(null)
+                    .map((_, i) => {
+                      const item = formData.keluarga[i] || {};
+                      return (
+                        <tr key={i}>
+                          <td style={{ border: '1px solid #000', padding: '4px' }}>{i + 1}</td>
+                          <td style={{ border: '1px solid #000', padding: '4px' }}>
+                            {item.nama || ''}
+                          </td>
+                          <td style={{ border: '1px solid #000', padding: '4px' }}>
+                            {item.hubungan || ''}
+                          </td>
+                          <td style={{ border: '1px solid #000', padding: '4px' }}>
+                            {item.statusMenikah || ''}
+                          </td>
+                          <td style={{ border: '1px solid #000', padding: '4px' }}>
+                            {item.usia || ''}
+                          </td>
+                          <td style={{ border: '1px solid #000', padding: '4px' }}>
+                            {item.agama || ''}
+                          </td>
+                          <td style={{ border: '1px solid #000', padding: '4px' }}>
+                            {item.sudahDibaptis|| ''}
+                          </td>
+                        </tr>
+                      );
+                    })}
             </tbody>
-        </table>
-    </div>
-</div>
-        {/* Bagian Pernyataan */}
-        <div className="mb-4">
-          <p className="mb-2">"Saya mengaku dengan mulut saya bahwa YESUS KRISTUS adalah TUHAN dan saya percaya di dalam hati bahwa TUHAN telah membangkitkan DIA dari antara orang mati. Saya percaya dan saya mau di BAPTIS, maka saya selamat." (Markus 16:16; Roma 10:9)</p>
-          <p>"Dengan ini saya menyatakan menerima BAPTISAN SELAM atas keyakinan dan kehendak saya sendiri."</p>
+          </table>
         </div>
+        <Typography paragraph>
+          “Saya mengaku dengan mulut saya bahwa YESUS KRISTUS adalah TUHAN dan saya percaya di dalam hati bahwa TUHAN telah
+          membangkitkan DIA dari antara orang mati. Saya percaya dan saya mau di BAPTIS, maka saya selamat.” (Markus 16:16; Roma 10:9)
+        </Typography>
+        <Typography paragraph sx={{ fontStyle: 'italic' }}>
+          Dengan ini saya menyatakan menerima BAPTISAN SELAM atas keyakinan dan kehendak saya sendiri.
+        </Typography>
 
-        {/* Bagian Tanda Tangan */}
-        <div className="flex justify-between mb-4">
-          <div className="w-1/2">
-            <h3 className="font-semibold mb-2">Di isi oleh Sekretariat</h3>
-            <p>Tempat/Tgl Baptis: .....................................................</p>
-            <p>Pelaksana: .....................................................</p>
-            <p>Saksi: .....................................................</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ width: '45%' }}>
+            <Typography sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+              Diisi oleh Sekretariat
+            </Typography>
+            <Typography>Tempat/Tgl Baptis: ........................................</Typography>
+            <Typography>Pelaksana: ........................................</Typography>
+            <Typography>Saksi: ........................................</Typography>
+
+            <br></br>
+            <Text variant="body2" align="center" sx={{ marginBottom: 2 }}>
+          Harap sertakan pas foto 3x4 sebanyak 2 lembar.
+        </Text>
+
           </div>
-          <div className="w-1/2">
-            <p>Cibinong, .....................................................</p>
-            <p>Yang mendaftar: .....................................................</p>
-            <p>( .................................................... )</p>
-            <p>Nama Jelas</p>
+          
+          <div style={{ width: '45%' }}>
+            <Typography>Cibinong, {moment().format('DD-MM-YYYY')}</Typography>
+            <Typography>Yang mendaftar,</Typography>
+            <div
+              style={{
+                marginTop: 30,
+                borderBottom: '1px solid #000',
+                width: '70%'
+              }}
+            />
+            <Typography>(Nama Jelas)</Typography>
           </div>
         </div>
 
-        {/* Bagian Foto */}
-        <div className="text-center">
-          <p>Harap Sertakan Pas Photo 3x4, 2 lembar.</p>
-        </div>
-        <div className="mt-4">
-
+       
         <PDFDownloadLink document={MyDocument} fileName="baptisan-air-detail.pdf">
-          {({ loading }) => (loading ? 'Loading document...' : 'Unduh PDF')}
+          {({ loading }) => (
+            <Button variant="contained" color="primary">
+              {loading ? 'Loading document...' : 'Unduh PDF'}
+            </Button>
+          )}
         </PDFDownloadLink>
-        </div>
       </Paper>
     </Box>
   );
