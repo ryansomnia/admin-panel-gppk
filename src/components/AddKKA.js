@@ -33,7 +33,7 @@ const AddKka = () => {
         formData.append('img', newKkaData.image);
       }
 
-      const response = await fetch('http://localhost:3013/cbn/v1/kka/addOne', {
+      const response = await fetch('https://api.gppkcbn.org/cbn/v1/kka/addOne', {
         method: 'POST',
         body: formData,
       });

@@ -47,7 +47,7 @@ function AddArtikel() {
 
     try {
       // Mengirim data ke API
-      const response = await fetch('http://localhost:3013/cbn/v1/artikel/addOneArticle', {
+      const response = await fetch('https://api.gppkcbn.org/cbn/v1/artikel/addOneArticle', {
         method: 'POST',
         body: data,
       });

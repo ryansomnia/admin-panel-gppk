@@ -36,13 +36,13 @@ function KkaMeditation() {
   const queryClient = useQueryClient();
 
   const fetchDataKKA = async () => {
-    const response = await fetch(`http://localhost:3013/cbn/v1/kka/getAll`);
+    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/kka/getAll`);
     const data = await response.json();
     return data.data;
   };
 
   const fetchDataRenunganKKA = async () => {
-    const response = await fetch(`http://localhost:3013/cbn/v1/artikel/bahanKKA`);
+    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/bahanKKA`);
     const data = await response.json();
     return data.data;
   };
@@ -52,7 +52,7 @@ function KkaMeditation() {
   const deleteRenungan = async (id) => {
     try {
       // Perbaikan: Gunakan POST dan kirim ID dalam body
-      const response = await fetch(`http://localhost:3013/cbn/v1/artikel/deleteRenungan`, {
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/deleteRenungan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

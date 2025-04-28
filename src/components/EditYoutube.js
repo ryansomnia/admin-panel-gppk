@@ -49,7 +49,7 @@ function EditYoutube() {
 
     
         try {
-          const response = await fetch(`http://localhost:3013/cbn/v1/youtube/updateData`, {
+          const response = await fetch(`https://api.gppkcbn.org/cbn/v1/youtube/updateData`, {
             method: 'POST',
             body: data,
           });
