@@ -14,7 +14,7 @@ function Pastoral() {
   const navigate = useNavigate();
 
   const fetchDataBaptism = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/baptisan/getFormBaptisan`);
+    const response = await fetch(`http://localhost:3013/cbn/v1/service/baptisan/getFormBaptisan`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data.data;
@@ -22,13 +22,13 @@ function Pastoral() {
 
   // Fetch data untuk Konseling
   const fetchDataKonseling = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/konseling/getData`);
+    const response = await fetch(`http://localhost:3013/cbn/v1/service/konseling/getData`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data.data;
   };
   // const fetchDataKartuJemaat = async () => {
-  //   const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/kartuJemaat/getData`);
+  //   const response = await fetch(`http://localhost:3013/cbn/v1/service/kartuJemaat/getData`);
   //   if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
   //   const data = await response.json();
   //   return data.data;
@@ -36,7 +36,7 @@ function Pastoral() {
 
   // Fetch data untuk Pendaftaran Pelayan (contoh, sesuaikan dengan endpoint Anda)
   const fetchDataPelayan = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pelayan/getData`);
+    const response = await fetch(`http://localhost:3013/cbn/v1/service/pelayan/getData`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data.data;
@@ -44,7 +44,7 @@ function Pastoral() {
 
   // Fetch data untuk Pemberkatan Pernikahan (contoh, sesuaikan dengan endpoint Anda)
   const fetchDataPernikahan = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pernikahan/getData`);
+    const response = await fetch(`http://localhost:3013/cbn/v1/service/pernikahan/getData`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data.data;
@@ -52,7 +52,7 @@ function Pastoral() {
 
   // Fetch data untuk Pemberkatan Rumah (contoh, sesuaikan dengan endpoint Anda)
   const fetchDataRumah = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pemberkatanRumah/getData`);
+    const response = await fetch(`http://localhost:3013/cbn/v1/service/pemberkatanRumah/getData`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data.data;
@@ -60,7 +60,7 @@ function Pastoral() {
 
   // Fetch data untuk Penyerahan Anak (contoh, sesuaikan dengan endpoint Anda)
   const fetchDataAnak = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/penyerahanAnak/getData`);
+    const response = await fetch(`http://localhost:3013/cbn/v1/service/penyerahanAnak/getData`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data.data;
@@ -68,7 +68,7 @@ function Pastoral() {
 
   const deleteBaptism = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/baptisan/deleteFormBaptisan`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/service/baptisan/deleteFormBaptisan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -86,7 +86,7 @@ function Pastoral() {
   };
   const deleteKonseling = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/konseling/deleteOneData`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/service/konseling/deleteOneData`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ id: id }),
@@ -99,7 +99,7 @@ function Pastoral() {
   };
   const deletePelayan = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pelayan/deleteOneData`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/service/pelayan/deleteOneData`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ id: id }),
@@ -112,7 +112,7 @@ function Pastoral() {
   };
   const deletePernikahan = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pernikahan/deleteOneData`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/service/pernikahan/deleteOneData`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ id: id }),
@@ -125,7 +125,7 @@ function Pastoral() {
   };
   const deletePemberkatanRumah = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/pemberkatanRumah/deleteOneData`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/service/pemberkatanRumah/deleteOneData`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ id: id }),
@@ -138,7 +138,7 @@ function Pastoral() {
   };
   const deletePenyerahanAnak = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/penyerahanAnak/deleteOneData`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/service/penyerahanAnak/deleteOneData`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ id: id }),
@@ -224,7 +224,7 @@ function Pastoral() {
          <div className="actions">
            <button className="btn btn-delete" onClick={() => handleDeletePernikahan(item.id)}>Hapus</button>
            <button className="btn btn-secondary">Edit</button>
-           <button className="btn btn-detail" onClick={() => navigate(`/dashboard/detail-konseling/${item.id}`)}>Detail</button>
+           <button className="btn btn-detail" onClick={() => navigate(`/dashboard/detail-penyerahan-anak/${item.id}`)}>Detail</button>
 
          </div>
        ),
@@ -265,7 +265,7 @@ function Pastoral() {
         <div className="actions">
           <button className="btn btn-delete" onClick={() => handleDeletePenyerahanAnak(item.id)}>Hapus</button>
           <button className="btn btn-secondary">Edit</button>
-          <button className="btn btn-detail" onClick={() => navigate(`/dashboard/detail-konseling/${item.id}`)}>Detail</button>
+          <button className="btn btn-detail" onClick={() => navigate(`/dashboard/detail-penyerahan-anak/${item.id}`)}>Detail</button>
 
         </div>
       ),

@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 
 const deleteDataDoa = async (id) => {
   try {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/doa/deleteOne`, {
+    const response = await fetch(`http://localhost:3013/cbn/v1/service/doa/deleteOne`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -81,7 +81,7 @@ function DoaRequests() {
   ];
 
   const fetchDoaData = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/service/doa/getAll`);
+    const response = await fetch(`http://localhost:3013/cbn/v1/service/doa/getAll`);
     const data = await response.json();
     return data.data;
   };

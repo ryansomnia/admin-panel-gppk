@@ -18,6 +18,8 @@ import EditRenungan from './components/EditRenungan';
 import EditYoutube from './components/EditYoutube';
 import Pastoral from './components/Pastoral';
 import DetailBaptisanAir from './components/DetailBaptisanAir';
+import DetailPenyerahanAnak from './components/DetailPenyerahanAnak';
+import AddKka from './components/AddKKA';
 
 // port =3011
 function App() {
@@ -30,13 +32,16 @@ function App() {
           <Route path="artikel" element={<ArtikelData />} />
           <Route path="add-article" element={<AddArtikel />} />
           <Route path="add-youtube" element={<AddYoutube />} />
+
           <Route path="edit-article/:id" element={<EditArtikel />} />
           <Route path="edit-renungan/:id" element={<EditRenungan />} />
           <Route path="edit-youtube/:id" element={<EditYoutube />} />
           <Route path="detail-baptisan/:id" element={<DetailBaptisanAir />} />
+          <Route path="detail-penyerahan-anak/:id" element={<DetailPenyerahanAnak />} />
 
           <Route path="add-cabang" element={<AddCabang />} />
           <Route path="add-renungan" element={<AddRenungan />} />
+          <Route path="add-kka" element={<AddKka />} />
 
           <Route path="kka" element={<KkaMeditation />} />
           <Route path="youtube" element={<LinkYoutube/>} />

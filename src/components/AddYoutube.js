@@ -30,7 +30,7 @@ function AddYoutube() {
 
     setIsLoading(true);
     try {
-      const response = await fetch('https://api.gppkcbn.org/cbn/v1/youtube/addData', {
+      const response = await fetch('http://localhost:3013/cbn/v1/youtube/addData', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

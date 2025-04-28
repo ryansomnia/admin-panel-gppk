@@ -66,7 +66,7 @@ function EditArtikel() {
     }
 
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/updateOneData`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/artikel/updateOneData`, {
         method: 'POST',
         body: data,
       });

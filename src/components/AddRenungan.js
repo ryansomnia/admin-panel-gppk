@@ -38,7 +38,7 @@ function AddRenungan() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://api.gppkcbn.org/cbn/v1/artikel/uploadbahanKKA', {
+      const response = await fetch('http://localhost:3013/cbn/v1/artikel/uploadbahanKKA', {
         method: 'POST',
         body: data,
       });

@@ -17,13 +17,13 @@ export default function Cabang() {
 
 
   const fetchDataCabang = async () => {
-    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/cabang/getAllData`);
+    const response = await fetch(`http://localhost:3013/cbn/v1/cabang/getAllData`);
     const data = await response.json();
     return data.data; 
   };
   const deleteCabang = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/cabang/deleteCabang`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/cabang/deleteCabang`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

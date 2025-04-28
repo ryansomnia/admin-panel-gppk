@@ -38,7 +38,7 @@ function ArtikelData() {
   // Fetch data artikel
   const fetchArtikelData = async () => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/getAllArticle`);
+      const response = await fetch(`http://localhost:3013/cbn/v1/artikel/getAllArticle`);
       if (!response.ok) {
         throw new Error('Failed to fetch articles');
       }
@@ -55,7 +55,7 @@ function ArtikelData() {
   // Delete artikel
   const deleteArtikel = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/deleteOneData`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/artikel/deleteOneData`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

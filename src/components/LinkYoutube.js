@@ -12,7 +12,7 @@ export default function LinkYoutube() {
 
   const fetchDataLinkYoutube = async () => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/youtube/getAllYoutube`);
+      const response = await fetch(`http://localhost:3013/cbn/v1/youtube/getAllYoutube`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -26,7 +26,7 @@ export default function LinkYoutube() {
 
   const deleteArtikel = async (id) => {
     try {
-      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/youtube/deleteData`, {
+      const response = await fetch(`http://localhost:3013/cbn/v1/youtube/deleteData`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
