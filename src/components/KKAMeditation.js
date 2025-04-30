@@ -6,30 +6,6 @@ import DynamicTable from './DynamicTable';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 
-const columns = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'KKA' },
-  { key: 'category', label: 'Kategori' },
-  { key: 'leader', label: 'Ketua' },
-  { key: 'area', label: 'Area' },
-  { key: 'day', label: 'Hari' },
-  { key: 'time', label: 'Jam' },
-  {
-    key: 'image',
-    label: 'Gambar',
-    render: (item) => <img src={item.image} alt={item.title} style={{ width: '200px', height: 'auto' }} />,
-  },
-  {
-    key: 'actions',
-    label: 'Aksi',
-    render: (item) => (
-      <div className="actions">
-        <button className="btn-delete">Hapus</button>
-        <button className="btn-secondary">Edit</button>
-      </div>
-    ),
-  },
-];
 
 function KkaMeditation() {
   const navigate = useNavigate();
@@ -45,6 +21,21 @@ function KkaMeditation() {
     const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/bahanKKA`);
     const data = await response.json();
     return data.data;
+  };
+
+  const deleteKKA = async (id) => {
+    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/kka/deleteOne`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({ id: id }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData?.message || 'Gagal menghapus KKA');
+    }
+    return response.json();
   };
 
   
@@ -88,6 +79,42 @@ function KkaMeditation() {
     queryFn: fetchDataRenunganKKA,
   });
 
+  const deleteKKAMutation = useMutation({
+    mutationFn: deleteKKA,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dataKKA']);
+      Swal.fire({
+        title: 'KKA Berhasil Dihapus!',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+    },
+    onError: (error) => {
+      Swal.fire({
+        title: 'Gagal Menghapus KKA!',
+        text: error.message,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    },
+  });
+  
+  const handleDeleteKKA = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Data KKA ini akan dihapus!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteKKAMutation.mutate(id);
+      }
+    });
+  };
+
+
 
   const deleteMutation = useMutation({
     mutationFn: deleteRenungan,
@@ -125,6 +152,30 @@ function KkaMeditation() {
     });
   };
 
+  const columns = [
+    { key: 'id', label: 'ID' },
+    { key: 'name', label: 'KKA' },
+    { key: 'category', label: 'Kategori' },
+    { key: 'leader', label: 'Ketua' },
+    { key: 'area', label: 'Area' },
+    { key: 'day', label: 'Hari' },
+    { key: 'time', label: 'Jam' },
+    {
+      key: 'image',
+      label: 'Gambar',
+      render: (item) => <img src={item.image} alt={item.title} style={{ width: '200px', height: 'auto' }} />,
+    },
+    {
+      key: 'actions',
+      label: 'Aksi',
+      render: (item) => (
+        <div className="actions">
+          <button className="btn-delete" onClick={() => handleDeleteKKA(item.id)}>Hapus</button>
+          <button className="btn-secondary">Edit</button>
+        </div>
+      ),
+    },
+  ];
   const bahanColumns = [
     { key: 'judulMateri', label: 'Judul Materi' },
     {
