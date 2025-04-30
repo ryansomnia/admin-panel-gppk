@@ -81,8 +81,8 @@ const EditKka = () => {
       data.append("day", updatedData.day);
       data.append("time", updatedData.time);
       data.append("area", updatedData.area);
-      if (updatedData.image) {
-        data.append("image", updatedData.image);
+    if (updatedData.image) {
+        data.append("img", updatedData.image); // Ubah 'image' menjadi 'img'
       }
 
       const response = await fetch("https://api.gppkcbn.org/cbn/v1/kka/editOne", {
