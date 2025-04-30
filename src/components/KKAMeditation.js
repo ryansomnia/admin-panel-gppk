@@ -171,7 +171,10 @@ function KkaMeditation() {
       render: (item) => (
         <div className="actions">
           <button className="btn-delete" onClick={() => handleDeleteKKA(item.id)}>Hapus</button>
-          <button className="btn-secondary">Edit</button>
+          <button
+            className="btn-secondary"
+            onClick={() => navigate(`/dashboard/edit-kka/${item.id}`)} // Tambahkan onClick di sini
+          >Edit</button>
         </div>
       ),
     },

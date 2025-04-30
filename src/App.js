@@ -20,6 +20,7 @@ import Pastoral from './components/Pastoral';
 import DetailBaptisanAir from './components/DetailBaptisanAir';
 import DetailPenyerahanAnak from './components/DetailPenyerahanAnak';
 import AddKka from './components/AddKKA';
+import EditKka from './components/EditKKA';
 
 // port =3011
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <Route path="add-youtube" element={<AddYoutube />} />
 
           <Route path="edit-article/:id" element={<EditArtikel />} />
+          <Route path="edit-kka/:id" element={<EditKka />} />
           <Route path="edit-renungan/:id" element={<EditRenungan />} />
           <Route path="edit-youtube/:id" element={<EditYoutube />} />
           <Route path="detail-baptisan/:id" element={<DetailBaptisanAir />} />
