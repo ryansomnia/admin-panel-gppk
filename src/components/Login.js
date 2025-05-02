@@ -197,7 +197,7 @@ function Login() {
           align="center"
           sx={{ mt: 2, color: '#D84040' }}
         >
-          © {new Date().getFullYear()} Your ssssCompany. All Rights Reserved.
+          © {new Date().getFullYear()} GPPKCBN. All Rights Reserved.
         </Typography>
       </Container>
     </Box>
