@@ -4,9 +4,10 @@ import Swal from 'sweetalert2';
 
 function AddCabang() {
   const [formData, setFormData] = useState({
-    title: '',
-    speaker: '',
-    url: '',
+    namaCabang: '',
+    pastor: '',
+    address: '',
+    img: null,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,10 +16,14 @@ function AddCabang() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, img: e.target.files[0] });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.speaker || !formData.url) {
+    if (!formData.namaCabang || !formData.pastor || !formData.address || !formData.img) {
       Swal.fire({
         title: 'Error',
         text: 'Semua field wajib diisi!',
@@ -30,10 +35,15 @@ function AddCabang() {
 
     setIsLoading(true);
     try {
-      const response = await fetch('https://api.gppkcbn.org/cbn/v1/youtube/addData', {
+      const data = new FormData();
+      data.append('namaCabang', formData.namaCabang);
+      data.append('pastor', formData.pastor);
+      data.append('address', formData.address);
+      data.append('img', formData.img); // 'img' should match the backend's expectation
+
+      const response = await fetch('https://api.gppkcbn.org/cbn/v1/cabang/addCabang', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: data, // Send FormData, not JSON
       });
 
       const result = await response.json();
@@ -44,7 +54,12 @@ function AddCabang() {
           icon: 'success',
           confirmButtonText: 'OK',
         });
-        setFormData({ title: '', speaker: '', url: '' });
+        setFormData({
+          namaCabang: '',
+          pastor: '',
+          address: '',
+          img: null,
+        });
       } else {
         Swal.fire({
           title: 'Error',
@@ -69,16 +84,16 @@ function AddCabang() {
     <Box sx={{ maxWidth: 600, margin: 'auto', padding: 3 }}>
       <Paper elevation={3} sx={{ padding: 4 }}>
         <Typography variant="h5" gutterBottom align="center">
-          Tambah Video Youtube
+          Tambah Cabang CBN
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Judul Video"
-                name="title"
-                value={formData.title}
+                label="Nama Cabang"
+                name="namaCabang"
+                value={formData.namaCabang}
                 onChange={handleInputChange}
                 required
               />
@@ -86,9 +101,9 @@ function AddCabang() {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Pembicara"
-                name="speaker"
-                value={formData.speaker}
+                label="Pastor"
+                name="pastor"
+                value={formData.pastor}
                 onChange={handleInputChange}
                 required
               />
@@ -96,12 +111,29 @@ function AddCabang() {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="URL Youtube"
-                name="url"
-                value={formData.url}
+                label="Alamat"
+                name="address"
+                value={formData.address}
                 onChange={handleInputChange}
                 required
               />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" component="label" fullWidth disabled={isLoading}>
+                Upload Gambar
+                <input
+                  type="file"
+                  hidden
+                  onChange={handleFileChange}
+                  accept="img/*"
+                  disabled={isLoading} // Nonaktifkan input saat loading
+                />
+              </Button>
+              {formData.img && (
+                <Typography variant="body2" sx={{ marginTop: 1 }}>
+                  Gambar: {formData.img.name}
+                </Typography>
+              )}
             </Grid>
             <Grid item xs={12}>
               <Button
@@ -111,7 +143,7 @@ function AddCabang() {
                 color="primary"
                 disabled={isLoading}
               >
-                {isLoading ? <CircularProgress size={24} /> : 'Tambahkan Video'}
+                {isLoading ? <CircularProgress size={24} /> : 'Tambahkan Data'}
               </Button>
             </Grid>
           </Grid>

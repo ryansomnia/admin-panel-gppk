@@ -105,7 +105,7 @@ export default function Cabang() {
   return (
     <div >
       <div className='youtube-section'>
-      <h2>Data Link Youtube</h2>
+      <h2>Data Cabang</h2>
       <button className="btn-primary" onClick={() => navigate('/dashboard/add-cabang')}>
           + Tambah Data
         </button>

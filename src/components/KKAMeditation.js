@@ -23,6 +23,12 @@ function KkaMeditation() {
     return data.data;
   };
 
+  const fetchDataKesaksian = async () => {
+    const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/kesaksian/getAllData`);
+    const data = await response.json();
+    return data.data;
+  }; 
+
   const deleteKKA = async (id) => {
     const response = await fetch(`https://api.gppkcbn.org/cbn/v1/kka/deleteOne`, {
       method: 'POST',
@@ -37,9 +43,6 @@ function KkaMeditation() {
     }
     return response.json();
   };
-
-  
-
   const deleteRenungan = async (id) => {
     try {
       // Perbaikan: Gunakan POST dan kirim ID dalam body
@@ -60,6 +63,25 @@ function KkaMeditation() {
     }
   };
 
+  const deleteKesaksian = async (id) => {
+    try {
+      // Perbaikan: Gunakan POST dan kirim ID dalam body
+      const response = await fetch(`https://api.gppkcbn.org/cbn/v1/artikel/kesaksian/deleteOneData`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ id: id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete Renungan');
+      }
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
 
   const {
     data: kkaData,
@@ -77,6 +99,15 @@ function KkaMeditation() {
   } = useQuery({
     queryKey: ['dataRenunganKKA'],
     queryFn: fetchDataRenunganKKA,
+  });
+
+  const {
+    data: kesaksianData,
+    isLoading: kesaksianIsLoading,
+    error: kesaksianError,
+  } = useQuery({
+    queryKey: ['dataKesaksian'],
+    queryFn: fetchDataKesaksian,
   });
 
   const deleteKKAMutation = useMutation({
@@ -152,6 +183,42 @@ function KkaMeditation() {
     });
   };
 
+  const deleteKesaksianMutation = useMutation({
+    mutationFn: deleteKesaksian,
+    onSuccess: () => {
+      // Perbaikan: Invalidate dataRenunganKKA
+      queryClient.invalidateQueries(['dataKesaksian']);
+      Swal.fire({
+        title: 'Kesaksian Berhasil Dihapus',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+    },
+    onError: (error) => {
+      Swal.fire({
+        title: 'Gagal Menghapus Kesaksian',
+        text: error.message,
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    },
+  });
+
+  const handleDeleteKesaksian = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Kesaksian ini akan dihapus!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+    }).then((result) => {
+      if (result.isConfirmed) {
+       deleteKesaksianMutation.mutate(id);
+      }
+    });
+  };
+
   const columns = [
     { key: 'id', label: 'ID' },
     { key: 'name', label: 'KKA' },
@@ -163,7 +230,7 @@ function KkaMeditation() {
     {
       key: 'image',
       label: 'Gambar',
-      render: (item) => <img src={item.image} alt={item.title} style={{ width: '200px', height: 'auto' }} />,
+      render: (item) => <img src={item.image} alt={item.name} style={{ width: '200px', height: 'auto' }} />,
     },
     {
       key: 'actions',
@@ -216,6 +283,37 @@ function KkaMeditation() {
       ),
     },
   ];
+  const kesaksianColumns = [
+    {
+      key: 'created_at',
+      label: 'Tanggal',
+      render: (item) => moment(item.created_at).format('DD/MM/YYYY'),
+    },
+    { key: 'nama', label: 'Nama' },
+    
+    {
+      key: 'highlight',
+      label: 'Highlight'
+    },
+    {
+      key: 'url',
+      label: 'Gambar',
+      render: (item) => <img src={item.url} alt={item.highlight} style={{ width: '200px', height: 'auto' }} />,
+    },
+    {
+      key: 'actions',
+      label: 'Aksi',
+      render: (item) => (
+        <div className="actions">
+          <button className="btn-delete" onClick={() =>handleDeleteKesaksian(item.id)}>
+          Hapus
+          </button>
+          <button className="btn-secondary" onClick={() => navigate(`/dashboard/edit-kesaksian/${item.id}`)}>Edit</button>
+        </div>
+      ),
+    },
+  ];
+
 
   return (
     <Box sx={{ p: 3 }}>
@@ -256,9 +354,25 @@ function KkaMeditation() {
 
       <Card>
         <CardContent>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+
           <Typography variant="h5" gutterBottom>
             Kesaksian KKA
           </Typography>
+          <Button variant="contained"  color="success" onClick={() => navigate('/dashboard/add-kesaksian')}>
+        + Tambah Kesaksian
+      </Button>
+      </Box>
+
+          {kesaksianIsLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+              <CircularProgress />
+            </Box>
+          ) : kesaksianError ? (
+            <Typography color="error">There was an error loading the Kesaksian data.</Typography>
+          ) : (
+          <DynamicTable columns={kesaksianColumns} data={kesaksianData} />
+          )}
         </CardContent>
       </Card>
 

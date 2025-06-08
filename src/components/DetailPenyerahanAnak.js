@@ -7,7 +7,9 @@ import {
   Button,
   CircularProgress,
   Paper,
-  Typography
+  Typography,
+  Grid,
+  Divider
 } from '@mui/material';
 import {
   PDFDownloadLink,
@@ -48,10 +50,9 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   headerImage: {
-    width: 500, // sesuaikan lebar gambar kop
+    width: 500,
     height: 'auto'
   },
- 
   sectionContainer: {
     marginBottom: 10,
     paddingHorizontal: 10
@@ -73,7 +74,6 @@ const styles = StyleSheet.create({
     width: '70%',
     textDecoration: 'underline',
     fontSize: 9
-
   },
   statementText: {
     marginTop: 10,
@@ -98,8 +98,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20
   },
-
-  // Style untuk Tabel Keluarga
   table: {
     display: 'table',
     width: 'auto',
@@ -110,8 +108,6 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row'
   },
-  // Tiap kolom beri lebar sesuai jumlah kolom total
-  // Mis. 5% utk No, 15% utk Nama, dst. Sesuaikan agar total 100%
   tableColNo: {
     width: '5%',
     borderStyle: 'solid',
@@ -154,12 +150,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#000'
   },
-  // Style untuk sel (isi)
   tableCell: {
     margin: 2,
     fontSize: 10
   },
-  // Style untuk header sel
   tableCellHeader: {
     margin: 2,
     fontSize: 10,
@@ -167,26 +161,33 @@ const styles = StyleSheet.create({
   }
 });
 
+
 function DetailPenyerahanAnak() {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
+ 
   const [formData, setFormData] = useState({
     nama_ayah: '',
-    tempatLahir: '',
-    tanggalLahir: '',
-    alamat: '',
-    noHP: '',
-    pendidikanTerakhir: '',
-    pekerjaan: '',
-    kka: '',
-    status: '',
-    tanggalMenikah: '',
-    kepercayaanLama: '',
-    jumlahKeluarga: '',
-    keluarga: [],
-    pernyataan: false
+    tempat_tanggal_lahir_ayah: '',
+    alamat_ayah: '',
+    telepon_ayah: '',
+    tempat_tanggal_baptis_ayah: '',
+    pendidikan_terakhir_ayah: '',
+    pekerjaan_ayah: '',
+    kka_ayah: '',
+    wilayah_ayah: '',
+    nama_ibu: '',
+    tempat_tanggal_lahir_ibu: '',
+    alamat_ibu: '',
+    telepon_ibu: '',
+    tempat_tanggal_baptis_ibu: '',
+    pendidikan_terakhir_ibu: '',
+    pekerjaan_ibu: '',
+    kka_ibu: '',
+    wilayah_ibu: '',
+    nama_anak: '',
+    tempat_tanggal_lahir_anak: ''
   });
 
   // Contoh penggunaan React Query untuk mengambil data
@@ -199,22 +200,31 @@ function DetailPenyerahanAnak() {
   useEffect(() => {
     if (dataAnak && id) {
       const anak = dataAnak.find((item) => item.id === parseInt(id));
+     console.log('===============anak=====================');
+     console.log(anak);
+     console.log('====================================');
       if (anak) {
         setFormData({
-          nama_ayah: anak.nama_ayah || '',
-          tempatLahir: anak.TempatLahir || '',
-          tanggalLahir: anak.TanggalLahir || '',
-          alamat: anak.Alamat || '',
-          noHP: anak.NoHP || '',
-          pendidikanTerakhir: anak.PendidikanTerakhir || '',
-          pekerjaan: anak.Pekerjaan || '',
-          kka: anak.KKA || '',
-          status: anak.StatusPernikahan || '',
-          tanggalMenikah: anak.TanggalMenikah || '',
-          kepercayaanLama: anak.KepercayaanLama || '',
-          jumlahKeluarga: anak.JumlahKeluarga || '',
-          keluarga: anak.Keluarga || [],
-          pernyataan: anak.Pernyataan || false
+          nama_ayah:anak.nama_ayah || '',
+          tempat_tanggal_lahir_ayah:anak.tempat_tanggal_lahir_ayah || '',
+          alamat_ayah:anak.alamat_ayah || '',
+          telepon_ayah:anak.telepon_ayah || '',
+          tempat_tanggal_baptis_ayah:anak.tempat_tanggal_baptis_ayah || '',
+          pendidikan_terakhir_ayah:anak.pendidikan_terakhir_ayah || '',
+          pekerjaan_ayah:anak. pekerjaan_ayah|| '',
+          kka_ayah:anak.kka_ayah || '',
+          wilayah_ayah:anak.wilayah_ayah || '',
+          nama_ibu:anak.nama_ibu || '',
+          tempat_tanggal_lahir_ibu:anak.tempat_tanggal_lahir_ibu || '',
+          alamat_ibu:anak.alamat_ibu || '',
+          telepon_ibu:anak.telepon_ibu || '',
+          tempat_tanggal_baptis_ibu:anak.tempat_tanggal_baptis_ibu || '',
+          pendidikan_terakhir_ibu:anak.pendidikan_terakhir_ibu || '',
+          pekerjaan_ibu:anak.pekerjaan_ibu || '',
+          kka_ibu:anak.kka_ibu || '',
+          wilayah_ibu:anak.wilayah_ibu || '',
+          nama_anak:anak.nama_anak || '',
+          tempat_tanggal_lahir_anak:anak.tempat_tanggal_lahir_anak || '',
         });
       }
     }
@@ -223,190 +233,122 @@ function DetailPenyerahanAnak() {
   if (isLoading) return <CircularProgress />;
   if (!dataAnak) return <Typography>Data not found.</Typography>;
 
-   // Persiapan data untuk tabel keluarga
-   let familyRows;
-   if (formData.keluarga.length > 5) {
-     // Jika data keluarga lebih dari 5, tampilkan semua
-     familyRows = formData.keluarga.map((item, i) => (
-       <View style={styles.tableRow} key={i}>
-         <View style={styles.tableColNo}>
-           <Text style={styles.tableCell}>{i + 1}</Text>
-         </View>
-         <View style={styles.tableColNama}>
-           <Text style={styles.tableCell}>{item.nama_ayah || ''}</Text>
-         </View>
-         <View style={styles.tableColHubKeluarga}>
-           <Text style={styles.tableCell}>{item.hubungan || ''}</Text>
-         </View>
-         <View style={styles.tableColStatus}>
-           <Text style={styles.tableCell}>{item.statusMenikah || ''}</Text>
-         </View>
-         <View style={styles.tableColUsia}>
-           <Text style={styles.tableCell}>{item.usia || ''}</Text>
-         </View>
-         <View style={styles.tableColAgama}>
-           <Text style={styles.tableCell}>{item.agama || ''}</Text>
-         </View>
-         <View style={styles.tableColBaptis}>
-           <Text style={styles.tableCell}>{item.sudahDibaptis|| ''}</Text>
-         </View>
-       </View>
-     ));
-   } else {
-     // Jika data keluarga <= 5, buat array sepanjang 5 dan isi sesuai data (jika ada), sisanya kosong
-     familyRows = Array(5)
-       .fill(null)
-       .map((_, i) => {
-         const item = formData.keluarga[i] || {}; // jika data belum ada, item akan kosong
-         return (
-           <View style={styles.tableRow} key={i}>
-             <View style={styles.tableColNo}>
-               <Text style={styles.tableCell}>{i + 1}</Text>
-             </View>
-             <View style={styles.tableColNama}>
-               <Text style={styles.tableCell}>{item.nama_ayah || ''}</Text>
-             </View>
-             <View style={styles.tableColHubKeluarga}>
-               <Text style={styles.tableCell}>{item.hubungan || ''}</Text>
-             </View>
-             <View style={styles.tableColStatus}>
-               <Text style={styles.tableCell}>{item.statusMenikah || ''}</Text>
-             </View>
-             <View style={styles.tableColUsia}>
-               <Text style={styles.tableCell}>{item.usia || ''}</Text>
-             </View>
-             <View style={styles.tableColAgama}>
-               <Text style={styles.tableCell}>{item.agama || ''}</Text>
-             </View>
-             <View style={styles.tableColBaptis}>
-               <Text style={styles.tableCell}>{item.sudahDibaptis|| ''}</Text>
-             </View>
-           </View>
-         );
-       });
-   }
  
   // Dokumen PDF
   const MyDocument = (
     <Document>
       <Page style={styles.page}>
-        {/* Header hanya menggunakan gambar kop */}
         <View style={styles.headerContainer}>
-          <Image src={kopImage} style={styles.headerImage} />
+          <Image src={kopImage} style={{marginBottom:4}} />
         </View>
-
-        {/* <View style={styles.divider} /> */}
-
-        {/* Data Diri */}
         <View style={styles.sectionContainer}>
+          <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>Ayah</Text>
           <View style={styles.formRow}>
-            <Text style={styles.label}>Nama Lengkap</Text>
-            <Text style={styles.value}>: {formData.namaLengkap || ' '}</Text>
+            <Text style={styles.label}>Nama Ayah</Text>
+            <Text style={styles.value}>: {formData.nama_ayah || ''}</Text>
           </View>
           <View style={styles.formRow}>
             <Text style={styles.label}>Tempat/Tgl Lahir</Text>
-            <Text style={styles.value}>: {formData.tempatLahir}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}
+            <Text style={styles.value}>
+              : {formData.tempat_tanggal_lahir_ayah || ''}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}
             </Text>
           </View>
           <View style={styles.formRow}>
-            <Text style={styles.label}>Alamat</Text>
-            <Text style={styles.value}>: {formData.alamat}</Text>
+            <Text style={styles.label}>Alamat No. Telp.</Text>
+            <Text style={styles.value}>: {formData.alamat_ayah || ''}, {formData.telepon_ayah || ''}</Text>
           </View>
           <View style={styles.formRow}>
-            <Text style={styles.label}>No. HP</Text>
-            <Text style={styles.value}>: {formData.noHP}</Text>
+            <Text style={styles.label}>Tempat/tgl Baptis</Text>
+            <Text style={styles.value}>: {formData.tempat_tanggal_baptis_ayah || ''}</Text>
           </View>
           <View style={styles.formRow}>
             <Text style={styles.label}>Pendidikan</Text>
-            <Text style={styles.value}>: {formData.pendidikanTerakhir}</Text>
+            <Text style={styles.value}>: {formData.pendidikan_terakhir_ayah || ''}</Text>
           </View>
           <View style={styles.formRow}>
             <Text style={styles.label}>Pekerjaan</Text>
-            <Text style={styles.value}>: {formData.pekerjaan}</Text>
+            <Text style={styles.value}>: {formData.pekerjaan_ayah || ''}</Text>
           </View>
           <View style={styles.formRow}>
             <Text style={styles.label}>KKA</Text>
-            <Text style={styles.value}>: {formData.kka}</Text>
+            <Text style={styles.value}>: {formData.kka_ayah || ''}</Text>
           </View>
           <View style={styles.formRow}>
-            <Text style={styles.label}>Status</Text>
+            <Text style={styles.label}>Wilayah</Text>
+            <Text style={styles.value}>: {formData.wilayah_ayah || ''}</Text>
+          </View>
+        </View>
+        <View style={styles.sectionContainer}>
+          <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>Ibu</Text>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Nama Ibu</Text>
+            <Text style={styles.value}>: {formData.nama_ibu || ''}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Tempat/Tgl Lahir</Text>
             <Text style={styles.value}>
-            : {formData.status}{' '}
-            {formData.tanggalMenikah ? `(Menikah pada ${moment(formData.tanggalMenikah).format('DD-MM-YYYY')})` : ''}
+              : {formData.tempat_tanggal_lahir_ibu || ''}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}
             </Text>
           </View>
           <View style={styles.formRow}>
-            <Text style={styles.label}>Kepercayaan Lama</Text>
-            <Text style={styles.value}>: {formData.kepercayaanLama}</Text>
+            <Text style={styles.label}>Alamat No. Telp.</Text>
+            <Text style={styles.value}>: {formData.alamat_ibu || ''}, {formData.telepon_ibu || ''}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Tempat/tgl Baptis</Text>
+            <Text style={styles.value}>: {formData.tempat_tanggal_baptis_ibu || ''}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Pendidikan</Text>
+            <Text style={styles.value}>: {formData.pendidikan_terakhir_ibu || ''}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Pekerjaan</Text>
+            <Text style={styles.value}>: {formData.pekerjaan_ibu || ''}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>KKA</Text>
+            <Text style={styles.value}>: {formData.kka_ibu || ''}</Text>
+          </View>
+          <View style={styles.formRow}>
+            <Text style={styles.label}>Wilayah</Text>
+            <Text style={styles.value}>: {formData.wilayah_ibu || ''}</Text>
           </View>
         </View>
-
-        {/* <View style={styles.divider} /> */}
- {/* Bagian Keluarga */}
- <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Penjelasan Mengenai Keluarga</Text>
-          <View style={styles.table}>
-            {/* Header Tabel */}
-            <View style={styles.tableRow}>
-              <View style={styles.tableColNo}>
-                <Text style={styles.tableCellHeader}>No</Text>
-              </View>
-              <View style={styles.tableColNama}>
-                <Text style={styles.tableCellHeader}>Nama</Text>
-              </View>
-              <View style={styles.tableColHubKeluarga}>
-                <Text style={styles.tableCellHeader}>Hub. Keluarga (Dengan Anda)</Text>
-              </View>
-              <View style={styles.tableColStatus}>
-                <Text style={styles.tableCellHeader}>Status Menikah/Belum</Text>
-              </View>
-              <View style={styles.tableColUsia}>
-                <Text style={styles.tableCellHeader}>Usia</Text>
-              </View>
-              <View style={styles.tableColAgama}>
-                <Text style={styles.tableCellHeader}>Agama</Text>
-              </View>
-              <View style={styles.tableColBaptis}>
-                <Text style={styles.tableCellHeader}>Sudah Dibaptis Selam/Belum</Text>
-              </View>
-            </View>
-            {/* Isi Tabel */}
-            {familyRows}
-          </View>
-        </View>
-        {/* Pernyataan */}
         <View style={styles.sectionContainer}>
-        <Text style={{ textAlign: 'center', fontStyle: 'italic', fontSize: 9}}>
-    “Saya mengaku dengan mulut saya bahwa YESUS KRISTUS adalah TUHAN dan saya percaya di dalam hati bahwa TUHAN telah membangkitkan DIA dari antara orang mati.
-    Saya percaya dan saya mau di BAPTIS, maka saya selamat.” (Markus 16:16; Roma 10:9)
-  </Text>
-  <Text style={[styles.statementText, { textAlign: 'center', fontSize: 9 }]}>
-    Dengan ini saya menyatakan menerima BAPTISAN SELAM atas keyakinan dan kehendak saya sendiri.
-  </Text>
+          <Text style={{ fontSize: 10, fontStyle: 'normal' }}>
+            Dengan ini kami menyatakan dihadapan TUHAN dan JemaatNya dengan kesungguhan hati ingin menyerahkan anak kami:
+          </Text>
+          <Text style={{fontSize: 10, fontWeight: 'bold', marginBottom: 0 }}>
+            Nama Anak: {formData.nama_anak || ''}
+          </Text>
+          <Text style={{fontSize: 10, marginTop: 0, marginBottom: 5, fontWeight: 'bold' }}>
+            Tempat/tanggal lahir: {formData.tempat_tanggal_lahir_anak || ''}
+          </Text>
+          <Text style={{ fontSize: 10 }}>
+            Dalam Kebaktian di Gereja GPPK CBN - Christ Bless Nation. Kami berjanji untuk menuntun anak kami untuk takut akan TUHAN
+            dan mengajarnya sesuai dengan FIRMAN TUHAN dalam setiap langkahnya.
+          </Text>
+          
+          <Text style={{marginTop:10, fontSize: 9, fontStyle: 'italic' }}>
+            &quot;Apa yang kuperintahkan kepadamu pada hari ini haruslah engkau perhatikan, haruslah engkau mengajarkannya
+            berulang-ulang kepada anak-anakmu dan membicarakannya apabila engkau duduk di rumahmu, apabila engkau sedang
+            dalam perjalanan, apabila engkau berbaring dan apabila engkau bangun.&quot; - Ulangan 6:6-7
+          </Text>
         </View>
-
-        {/* <View style={styles.divider} /> */}
-
-        {/* Bagian Tanda Tangan */}
         <View style={styles.signatureSection}>
           <View style={styles.signatureBox}>
-            <Text style={{ marginBottom: 10, fontWeight: 'bold' }}>Diisi oleh Sekretariat</Text>
-            <Text>Tempat/Tgl Baptis: ........................................</Text>
+            <Text style={{fontSize: 10, fontWeight: 'bold', marginBottom: 4 }}>Diisi oleh Sekretariat</Text>
+            <Text>Tempat/Tgl Dedikasi: ........................................</Text>
             <Text>Pelaksana: ........................................</Text>
-            <Text>Saksi: ........................................</Text>
-
-            <Text style={{ marginTop: 15 }}>
-              Harap Sertakan Pas Photo 3x4, 2 lembar.
-            </Text>
           </View>
-          <View style={styles.signatureBox}>
-            <Text>Cibinong, {moment().format('DD-MM-YYYY')}</Text>
-            <Text>Yang mendaftar,</Text>
+          <View style={ styles.signatureBox}>
+            <Text style={{fontSize: 10}} >Cibinong, {moment().format('DD-MM-YYYY')}</Text>
+            <Text style={{fontSize: 10}} >Yang mendaftar,</Text>
             <View style={styles.signatureLine} />
-            <Text>(Nama Jelas)</Text>
+            <Text style={{fontSize: 10}} >(Nama Jelas)</Text>
           </View>
         </View>
-
       </Page>
     </Document>
   );
@@ -428,7 +370,7 @@ function DetailPenyerahanAnak() {
 
      
 
-         {/* BAGIAN DATA DIRI - WEB PREVIEW */}
+         {/* Part Ayah */}
          <div style={{ marginBottom: '1rem' }}>
           <h4 style={{marginBottom: '0.3rem'}}>Ayah</h4>
           {/* Baris 1 */}
@@ -446,172 +388,157 @@ function DetailPenyerahanAnak() {
             </div>
             <div style={{ marginRight: 4 }}>:</div>
             <div>
-              {formData.tempatLahir}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}
+              {formData.tempat_tanggal_lahir_ayah}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}
             </div>
           </div>
           {/* Baris 3 */}
           <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
-            <div style={{  width: '30%' }}>Alamat</div>
+            <div style={{  width: '30%' }}>Alamat No. Telp.</div>
             <div style={{ marginRight: 4 }}>:</div>
-            <div>{formData.alamat}</div>
+            <div>{formData.alamat_ayah}, {formData.telepon_ayah}</div>
           </div>
           {/* Baris 4 */}
-          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
-            <div style={{  width: '30%' }}>No. HP</div>
-            <div style={{ marginRight: 4 }}>:</div>
-            <div>{formData.noHP}</div>
-          </div>
+        
 
           <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
-            <div style={{  width: '30%', fontWeight: 'bold' }}>Tempat/tgl Baptis</div>
+            <div style={{  width: '30%'}}>Tempat/tgl Baptis</div>
             <div style={{ marginRight: 4 }}>:</div>
-            <div>{formData.pendidikanTerakhir}</div>
+            <div>{formData.tempat_tanggal_baptis_ayah}</div>
           </div>
           {/* Baris 5 */}
           <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
-            <div style={{  width: '30%', fontWeight: 'bold' }}>Pendidikan</div>
+            <div style={{  width: '30%' }}>Pendidikan</div>
             <div style={{ marginRight: 4 }}>:</div>
-            <div>{formData.pendidikanTerakhir}</div>
+            <div>{formData.pendidikan_terakhir_ayah}</div>
           </div>
           {/* Baris 6 */}
           <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
-            <div style={{  width: '30%', fontWeight: 'bold' }}>Pekerjaan</div>
+            <div style={{  width: '30%' }}>Pekerjaan</div>
             <div style={{ marginRight: 4 }}>:</div>
-            <div>{formData.pekerjaan}</div>
+            <div>{formData.pekerjaan_ayah}</div>
           </div>
           {/* Baris 7 */}
           <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
-            <div style={{  width: '30%', fontWeight: 'bold' }}>KKA</div>
+            <div style={{  width: '30%' }}>KKA</div>
             <div style={{ marginRight: 4 }}>:</div>
-            <div>{formData.kka}</div>
+            <div>{formData.kka_ayah}</div>
           </div>
-          {/* Baris 8 */}
           <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
-            <div style={{ width: '30%', fontWeight: 'bold' }}>Status</div>
-
+            <div style={{  width: '30%' }}>Wilayah</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.wilayah_ayah}</div>
+          </div>
+    
+      {/* Part Ibu */}
+          <h4 style={{marginBottom: '0.3rem'}}>Ibu</h4>
+          {/* Baris 1 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{ width: '30%'}}>
+              Nama Ibu
+            </div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.nama_ibu}</div>
+          </div>
+          {/* Baris 2 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%' }}>
+              Tempat/Tgl Lahir
+            </div>
             <div style={{ marginRight: 4 }}>:</div>
             <div>
-              {formData.status}{' '}
-              {formData.tanggalMenikah
-                ? `(Menikah pada ${moment(formData.tanggalMenikah).format('DD-MM-YYYY')})`
-                : ''}
+              {formData.tempat_tanggal_lahir_ibu}, {moment(formData.tanggalLahir).format('DD-MM-YYYY')}
             </div>
           </div>
-          {/* Baris 9 */}
+          {/* Baris 3 */}
           <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
-            <div style={{  width: '30%', fontWeight: 'bold' }}>
-              Kepercayaan Lama
-            </div>
+            <div style={{  width: '30%' }}>Alamat No. Telp.</div>
             <div style={{ marginRight: 4 }}>:</div>
-            <div>{formData.kepercayaanLama}</div>
+            <div>{formData.alamat_ibu}, {formData.telepon_ibu}</div>
           </div>
+          {/* Baris 4 */}
+        
+
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%'}}>Tempat/tgl Baptis</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.tempat_tanggal_baptis_ibu}</div>
+          </div>
+          {/* Baris 5 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%' }}>Pendidikan</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.pendidikan_terakhir_ibu}</div>
+          </div>
+          {/* Baris 6 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%' }}>Pekerjaan</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.pekerjaan_ibu}</div>
+          </div>
+          {/* Baris 7 */}
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%' }}>KKA</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.kka_ibu}</div>
+          </div>
+          <div style={{ display: 'flex', marginBottom: '0.3rem' }}>
+            <div style={{  width: '30%' }}>Wilayah</div>
+            <div style={{ marginRight: 4 }}>:</div>
+            <div>{formData.wilayah_ibu}</div>
+          </div>
+    
+       
         </div>
 {/* Tabel Keluarga (untuk preview web, opsional) */}
-<Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+{/* <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
           Penjelasan Mengenai Keluarga
         </Typography>
         <div style={{ overflowX: 'auto', marginBottom: '1rem' }}>
-          <table
-            style={{
-              borderCollapse: 'collapse',
-              width: '100%',
-              border: '1px solid #000'
-            }}
-          >
-            <thead>
-              <tr style={{ backgroundColor: '#f0f0f0' }}>
-                <th style={{ border: '1px solid #000', padding: '4px' }}>No</th>
-                <th style={{ border: '1px solid #000', padding: '4px' }}>Nama</th>
-                <th style={{ border: '1px solid #000', padding: '4px' }}>
-                  Hub. Keluarga (Dengan Anda)
-                </th>
-                <th style={{ border: '1px solid #000', padding: '4px' }}>
-                  Status Menikah/Belum
-                </th>
-                <th style={{ border: '1px solid #000', padding: '4px' }}>Usia</th>
-                <th style={{ border: '1px solid #000', padding: '4px' }}>Agama</th>
-                <th style={{ border: '1px solid #000', padding: '4px' }}>
-                  Sudah Dibaptis Selam/Belum
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {formData.keluarga.length > 5
-                ? formData.keluarga.map((item, i) => (
-                    <tr key={i}>
-                      <td style={{ border: '1px solid #000', padding: '4px' }}>{i + 1}</td>
-                      <td style={{ border: '1px solid #000', padding: '4px' }}>
-                        {item.nama || ''}
-                      </td>
-                      <td style={{ border: '1px solid #000', padding: '4px' }}>
-                        {item.hubungan || ''}
-                      </td>
-                      <td style={{ border: '1px solid #000', padding: '4px' }}>
-                        {item.statusMenikah || ''}
-                      </td>
-                      <td style={{ border: '1px solid #000', padding: '4px' }}>
-                        {item.usia || ''}
-                      </td>
-                      <td style={{ border: '1px solid #000', padding: '4px' }}>
-                        {item.agama || ''}
-                      </td>
-                      <td style={{ border: '1px solid #000', padding: '4px' }}>
-                        {item.sudahDibaptis|| ''}
-                      </td>
-                    </tr>
-                  ))
-                : Array(5)
-                    .fill(null)
-                    .map((_, i) => {
-                      const item = formData.keluarga[i] || {};
-                      return (
-                        <tr key={i}>
-                          <td style={{ border: '1px solid #000', padding: '4px' }}>{i + 1}</td>
-                          <td style={{ border: '1px solid #000', padding: '4px' }}>
-                            {item.nama || ''}
-                          </td>
-                          <td style={{ border: '1px solid #000', padding: '4px' }}>
-                            {item.hubungan || ''}
-                          </td>
-                          <td style={{ border: '1px solid #000', padding: '4px' }}>
-                            {item.statusMenikah || ''}
-                          </td>
-                          <td style={{ border: '1px solid #000', padding: '4px' }}>
-                            {item.usia || ''}
-                          </td>
-                          <td style={{ border: '1px solid #000', padding: '4px' }}>
-                            {item.agama || ''}
-                          </td>
-                          <td style={{ border: '1px solid #000', padding: '4px' }}>
-                            {item.sudahDibaptis|| ''}
-                          </td>
-                        </tr>
-                      );
-                    })}
-            </tbody>
-          </table>
-        </div>
-        <Typography paragraph>
+       
+        </div> */}
+        {/* <Typography paragraph>
           “Saya mengaku dengan mulut saya bahwa YESUS KRISTUS adalah TUHAN dan saya percaya di dalam hati bahwa TUHAN telah
           membangkitkan DIA dari antara orang mati. Saya percaya dan saya mau di BAPTIS, maka saya selamat.” (Markus 16:16; Roma 10:9)
+        </Typography> */}
+        <Typography paragraph sx={{ fontStyle: 'normal', marginTop:0 }}>
+          Dengan ini kami menyatakan dihadapan TUHAN dan JemaatNya dengan kesungguhan hati ingin menyerahkan anak kami:
         </Typography>
-        <Typography paragraph sx={{ fontStyle: 'italic' }}>
-          Dengan ini saya menyatakan menerima BAPTISAN SELAM atas keyakinan dan kehendak saya sendiri.
+        <Typography style={{marginBottom:0}} paragraph sx={{ fontStyle: 'normal', fontWeight:'bold' }}>
+         Nama Anak: {formData.nama_anak}
         </Typography>
+        <Typography style={{marginTop:0, marginBottom:30}} paragraph sx={{ fontStyle: 'normal', fontWeight:'bold' }}>
+        Tempat/tanggal lahir: {formData.tempat_tanggal_lahir_anak}
+        </Typography>
+
+        <Typography style={{fontSize:15}} paragraph>
+          Dalam Kebaktian di Gereja GPPK CBN - Christ Bless Nation. 
+          Kami berjanji untuk 
+          menuntun anak kami untuk takut akan TUHAN
+          dan mengajarnya sesuai dengan FIRMAN TUHAN dalam setiap langkahnya.
+        </Typography>
+
+        <Typography style={{fontSize:13, fontStyle:'italic'}} paragraph>
+          "Apa yang kuperintahkan kepadamu pada
+           hari ini haruslah engkau perhatikan, 
+           haruslah engkau mengajarkannya 
+           berulang-ulang kepada anak-anakmu 
+           dan membicarakannya apabila engkau 
+           duduk di rumahmu, apabila engkau sedang 
+           dalam perjalanan, apabila engkau berbaring 
+           dan apabila engkau bangun." - Ulangan 6:6-7
+         </Typography>
+
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
           <div style={{ width: '45%' }}>
             <Typography sx={{ fontWeight: 'bold', marginBottom: 1 }}>
               Diisi oleh Sekretariat
             </Typography>
-            <Typography>Tempat/Tgl Baptis: ........................................</Typography>
+            <Typography>Tempat/Tgl Dedikasi: ........................................</Typography>
             <Typography>Pelaksana: ........................................</Typography>
-            <Typography>Saksi: ........................................</Typography>
 
             <br></br>
-            <Text variant="body2" align="center" sx={{ marginBottom: 2 }}>
-          Harap sertakan pas foto 3x4 sebanyak 2 lembar.
-        </Text>
+          
 
           </div>
           
@@ -630,7 +557,7 @@ function DetailPenyerahanAnak() {
         </div>
 
        
-        <PDFDownloadLink document={MyDocument} fileName="baptisan-air-detail.pdf">
+        <PDFDownloadLink document={MyDocument} fileName="penyerahan-anak-detail.pdf">
           {({ loading }) => (
             <Button variant="contained" color="primary">
               {loading ? 'Loading document...' : 'Unduh PDF'}

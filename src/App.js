@@ -21,6 +21,13 @@ import DetailBaptisanAir from './components/DetailBaptisanAir';
 import DetailPenyerahanAnak from './components/DetailPenyerahanAnak';
 import AddKka from './components/AddKKA';
 import EditKka from './components/EditKKA';
+import AddKesaksian from './components/AddKesaksian';
+import EditKesaksian from './components/EditKesaksian';
+import DetailKonseling from './components/DetailKonseling';
+import DetailPernikahan from './components/DetailPernikahan';
+import EditFormPernikahan from './components/EditFormPernikahan';
+import EditJemaat from './components/EditJemaat';
+import DetailKartu from './components/DetailKartu';
 
 // port =3011
 function App() {
@@ -32,16 +39,26 @@ function App() {
           {/* Path child harus relatif */}
           <Route path="artikel" element={<ArtikelData />} />
           <Route path="add-article" element={<AddArtikel />} />
+          <Route path="add-kesaksian" element={<AddKesaksian />} />
           <Route path="add-youtube" element={<AddYoutube />} />
+          <Route path="add-cabang" element={<AddCabang />} />
 
           <Route path="edit-article/:id" element={<EditArtikel />} />
+          <Route path="edit-kesaksian/:id" element={<EditKesaksian />} />
+          <Route path="edit-jemaat/:id" element={<EditJemaat />} />
+
           <Route path="edit-kka/:id" element={<EditKka />} />
           <Route path="edit-renungan/:id" element={<EditRenungan />} />
           <Route path="edit-youtube/:id" element={<EditYoutube />} />
+          <Route path="edit-pernikahan/:id" element={<EditFormPernikahan />} />
+
           <Route path="detail-baptisan/:id" element={<DetailBaptisanAir />} />
           <Route path="detail-penyerahan-anak/:id" element={<DetailPenyerahanAnak />} />
+          <Route path="detail-konseling/:id" element={<DetailKonseling />} />
+          <Route path="detail-pernikahan/:id" element={<DetailPernikahan />} />
+          <Route path="detail-kartu/:id" element={<DetailKartu />} />
 
-          <Route path="add-cabang" element={<AddCabang />} />
+
           <Route path="add-renungan" element={<AddRenungan />} />
           <Route path="add-kka" element={<AddKka />} />
 
